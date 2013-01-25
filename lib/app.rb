@@ -13,7 +13,8 @@ module Mygoogle
 
 
         before do
-            puts "before"
+            # puts "before"
+            @@logger.info("before")
             pass
         end
 
@@ -30,7 +31,7 @@ module Mygoogle
         end
 
         after do
-            puts "after"
+            # puts "after"
             pass
         end
 

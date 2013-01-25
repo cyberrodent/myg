@@ -12,6 +12,7 @@ GEM
       ffi (~> 1.0, >= 1.0.6)
     ffi (1.3.1)
     json (1.7.6)
+    log4r (1.1.10)
     mime-types (1.19)
     multi_json (1.5.0)
     mustache (0.99.4)
@@ -43,6 +44,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   json
+  log4r
   mustache
   nokogiri (~> 1.4.7)
   rack

@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "log4r"
 gem "rake"
 gem "rack"
 gem "mustache"
