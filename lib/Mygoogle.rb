@@ -1,21 +1,18 @@
 # Mygoogle
 #
-require 'rubygems'
-require 'bundler'
-Bundler.setup
-
-require 'sinatra/base'
-require 'mustache/sinatra'
-
-base_dir = File.dirname(File.dirname(__FILE__))
-$LOAD_PATH.unshift base_dir unless $LOAD_PATH.include? base_dir
-
 module Mygoogle
    class << self
         attr_accessor :stuff
 
-        def new(app, logger)
-            @@logger = logger
+        def new(app)
+
+            logger = Log4r::Logger.new('applog')
+            logger.outputters << Log4r::FileOutputter.new('applog', :filename =>  '/tmp/app.log')
+            logger.outputters << Log4r::Outputter.stdout
+            logger.info("start")
+
+
+            @logger = logger
         end
 
         def initialize

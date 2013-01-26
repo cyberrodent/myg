@@ -1,6 +1,10 @@
+require 'sinatra/base'
+require 'mustache/sinatra'
+
 module Mygoogle
     class App < Sinatra::Base
         register Mustache::Sinatra
+        helpers Mygoogle::Helpers
 
         set :mustache, {
             :views => 'views/',
@@ -8,13 +12,13 @@ module Mygoogle
             :namespace => Mygoogle
         }
 
-        set :public, "public/"
+        set :public_folder, "public/"
         set :static, true
 
 
         before do
             # puts "before"
-            @@logger.info("before")
+            # @@logger.info("before")
             pass
         end
 
@@ -22,6 +26,16 @@ module Mygoogle
             return "ACK"
         end
 
+        get '/parse' do
+            doc = parsePrefs()
+            doc
+        end
+
+
+
+
+
+        # ---- catch all, errors and after ---- #
         get '/*' do
             return "ALL"
         end
