@@ -27,8 +27,8 @@ module Mygoogle
         end
 
         get '/parse' do
-            doc = parsePrefs()
-            doc
+            tabs = parsePrefs()
+            tabs.inspect 
         end
 
 
