@@ -6,6 +6,8 @@ module Mygoogle
         register Mustache::Sinatra
         helpers Mygoogle::Helpers
 
+
+
         set :mustache, {
             :views => 'views/',
             :templates => 'templates/',
@@ -17,6 +19,7 @@ module Mygoogle
 
 
         before do
+            setup()
             # puts "before"
             # @@logger.info("before")
             pass
@@ -27,8 +30,24 @@ module Mygoogle
         end
 
         get '/parse' do
+
+            o = ''
+
             tabs = parsePrefs()
-            tabs.inspect 
+
+            tabs.each {|tab|
+
+                @@logger.info("Fetch RSS feeds in #{tab[:tabname]}")
+                tab[:tabrss].each {|rss|
+                   o += rss
+                   @@logger.info("\tFetching #{rss}")
+                   res = fetchFeed(rss)
+                   @@logger.info(res.inspect)
+                   
+                }    
+            }
+
+            return o
         end
 
 

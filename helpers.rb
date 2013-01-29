@@ -5,6 +5,22 @@ require 'sinatra/base'
 module Mygoogle
     module Helpers
 
+        @@logger  = nil
+
+        def setup
+            unless @@logger 
+                logger = Log4r::Logger.new('APPLOG')
+                logger.outputters << Log4r::FileOutputter.new('applog', :filename =>  '/tmp/app.log')
+                logger.outputters << Log4r::Outputter.stdout
+
+                @@logger = logger
+            end
+        end
+
+        def mylog(str, level = "INFO")
+            @@logger.info(str)
+        end
+
         def parsePrefs
             pref_file = "./data/iGoogle-settings.xml"
             f = File.open(pref_file)
@@ -12,7 +28,6 @@ module Mygoogle
             f.close
 
             @doc.remove_namespaces!
-
 
             myprefs =  [] # store our iGoogle tab data
             
@@ -45,5 +60,15 @@ module Mygoogle
             }
             myprefs
         end
+
+        def fetchFeed(feed_url)
+            feed = nil
+            if feed_url
+                feed = FeedTools::Feed.open(feed_url)
+            end
+            feed
+        end
+
+
     end
 end
