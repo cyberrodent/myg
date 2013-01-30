@@ -4,9 +4,8 @@ require 'mustache/sinatra'
 module Mygoogle
     class App < Sinatra::Base
         register Mustache::Sinatra
+
         helpers Mygoogle::Helpers
-
-
 
         set :mustache, {
             :views => 'views/',
@@ -19,9 +18,9 @@ module Mygoogle
 
 
         before do
-            setup()
+            # setup()
             # puts "before"
-            # @@logger.info("before")
+            # $logger.info("before")
             pass
         end
 
@@ -37,14 +36,15 @@ module Mygoogle
 
             tabs.each {|tab|
 
-                @@logger.info("Fetch RSS feeds in #{tab[:tabname]}")
+                $logger.info("Fetch RSS feeds in #{tab[:tabname]}")
                 tab[:tabrss].each {|rss|
                    o += rss
-                   @@logger.info("\tFetching #{rss}")
+                   $logger.info("\tFetching #{rss}")
                    res = fetchFeed(rss)
-                   @@logger.info(res.inspect)
                    
-                }    
+                   # unless res.nil? $logger.info(res.last_modified); end
+                   
+                } 
             }
 
             return o
@@ -70,3 +70,5 @@ module Mygoogle
 
     end
 end
+
+

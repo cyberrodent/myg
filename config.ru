@@ -16,5 +16,3 @@ end
 # use Rack::CommonLogger, logger
 # use Mygoogle, logger
 run Mygoogle::App.new
-
-
