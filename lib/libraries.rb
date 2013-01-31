@@ -27,6 +27,7 @@ require './helpers'
 require './lib/app'
 require './lib/mygoogle'
 require "./lib/graphite"
+require "./views/layout"
 
 
 # Setup a global logger

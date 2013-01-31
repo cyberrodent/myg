@@ -29,25 +29,54 @@ module Mygoogle
         end
 
         get '/parse' do
+            start_time = Time.now
 
-            o = ''
+            num_feeds = 0 
 
             tabs = parsePrefs()
+            tabs_parse = []
 
             tabs.each {|tab|
 
-                $logger.info("Fetch RSS feeds in #{tab[:tabname]}")
+                tab_temp = []
+
+                tname = tab[:tabname] 
+                $logger.info("Fetch RSS feeds in #{tname}")
+
+                tab_feeds = 0
                 tab[:tabrss].each {|rss|
-                   o += rss
-                   $logger.info("\tFetching #{rss}")
-                   res = fetchFeed(rss)
-                   
-                   # unless res.nil? $logger.info(res.last_modified); end
-                   
-                } 
+
+                    # TODO
+                    break if tab_feeds > 2
+                    # break if num_feeds > 0
+                    tab_feeds = tab_feeds + 1
+
+                    $logger.info("\tFetching #{rss}")
+                    res = fetchFeed(rss)
+                    feed_title = res.title
+                    num_feeds = num_feeds + 1
+                    pfeed = processFeed(res) 
+
+                    tab_temp << { 
+                        :feed_title => feed_title,
+                        :feed_data  => pfeed 
+                    }
+                }
+                tabs_parse << {
+                    :tab_name => tname,
+                    :tab_data => tab_temp
+                    }
             }
 
-            return o
+            duration = Time.now - start_time
+            $logger.info("Parsed #{num_feeds} feed; took #{duration} seconds")
+
+            # return tabs_parse.inspect
+            @tabs_parse = tabs_parse
+
+
+            $logger.info(tabs_parse.inspect)
+            mustache :parse 
         end
 
 
