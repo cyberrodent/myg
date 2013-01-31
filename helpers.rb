@@ -89,10 +89,11 @@ module Mygoogle
             feed
         end
 
-
-
         def processFeed(feed, how_many = 6)
             processed_feed = []
+            if feed.nil?
+                return processed_feed
+            end
             feed.entries[0..how_many].each {|e|
                 processed_feed << { 
                     :feed_title => feed.title,

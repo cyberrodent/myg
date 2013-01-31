@@ -47,13 +47,14 @@ module Mygoogle
                 tab[:tabrss].each {|rss|
 
                     # TODO
-                    break if tab_feeds > 2
+                    break if tab_feeds > 10
                     # break if num_feeds > 0
                     tab_feeds = tab_feeds + 1
 
                     $logger.info("\tFetching #{rss}")
                     res = fetchFeed(rss)
-                    feed_title = res.title
+
+                    feed_title = res.nil? ? "untitled" : res.title
                     num_feeds = num_feeds + 1
                     pfeed = processFeed(res) 
 
@@ -74,8 +75,6 @@ module Mygoogle
             # return tabs_parse.inspect
             @tabs_parse = tabs_parse
 
-
-            $logger.info(tabs_parse.inspect)
             mustache :parse 
         end
 
