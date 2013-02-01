@@ -10,6 +10,9 @@ module Mygoogle
         end
 
         def parsePrefs
+
+            start_time = Time.now
+
             pref_file = "./data/iGoogle-settings.xml"
             f = File.open(pref_file)
             @doc = Nokogiri::XML(f)
@@ -46,6 +49,10 @@ module Mygoogle
                     } 
                 end
             }
+
+            duration = Time.now - start_time
+            $g.report("myg.prefparsetime", duration)
+
             myprefs
         end
 

@@ -4,5 +4,6 @@ module Mygoogle::Views
         def tabs
             @tabs_parse
         end
+
     end
 end

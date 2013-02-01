@@ -1,16 +1,12 @@
 Oh hey
 
+{{#tabhashkeys}}
+    <b>{{ }}</b>
+    {{# tabhash[{{ }}] }} 
+            inside 
+    {{/ tabhash }} 
 
-{{#tabs}}
-    <hr />
-    <h1>{{tab_name}}</h1>
+{{/tabhashkeys}}
 
-    {{#tab_data}}
-        
-        <h3>{{{feed_title}}}</h3>
-        {{#feed_data}}
-            <li><a href="{{url}}" target="_blank">{{title}}</a></li>
-            {{{summary}}}
-        {{/feed_data}}
-    {{/tab_data}}
-{{/tabs}}
+
+

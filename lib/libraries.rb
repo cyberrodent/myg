@@ -41,5 +41,5 @@ $statsd.namespace = 'myp'
 $statsd.count('init', 1)
 
 $g = Graphite.new('machsheva.home')
-$g.report('myg.init', 1)
+
 

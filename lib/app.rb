@@ -25,21 +25,40 @@ module Mygoogle
         end
 
         get '/' do
-            return "ACK"
+            prefs = parsePrefs()
+            mytabs = {}
+
+            tabs = parsePrefs()
+            tabs.each {|tab|
+                tname = tab[:tabname]
+                mytabs[tname.downcase.to_sym] = {
+                   :tab_name => tname,
+                   :tab_data => []    
+                }
+            }
+            @mytabs = mytabs
+
+            mustache :home  
+        end
+
+        get '/tabs/:tname' do |tname|
+
+            "well. #{tname} how was that?" 
         end
 
         get '/parse' do
-
+            $g.report('myg.init', 1)
             start_time = Time.now
-
             num_feeds = 0 
             tabs_parse = []
+            mytabs = {}    # trying out storing it as a hash
 
             tabs = parsePrefs()
             tabs.each {|tab|
 
                 tname = tab[:tabname]
                 tab_temp = []
+                mytabs[tname.downcase.to_sym] = {}
                 tab_feeds = 0
                 
                 $logger.info("Fetch RSS feeds in #{tname}")
@@ -47,7 +66,7 @@ module Mygoogle
                 tab[:tabrss].each {|rss|
 
                     # TODO
-                    break if tab_feeds > 10
+                    break if tab_feeds > 1
                     # break if num_feeds > 0
 
                     $logger.info("\tFetching #{rss}")
@@ -60,11 +79,14 @@ module Mygoogle
                     feed_title = res.nil? ? "untitled" : res.title
 
                     pfeed = processFeed(res) 
-
-                    tab_temp << { 
+                    f = { 
                         :feed_title => feed_title,
                         :feed_data  => pfeed 
                     }
+                    tab_temp << f
+
+                    mytabs[tname.downcase.to_sym] = f
+
                 } # end of each tabrss
 
                 tabs_parse << { 
@@ -75,9 +97,10 @@ module Mygoogle
 
             duration = Time.now - start_time
             $logger.info("Parsed #{num_feeds} feed; took #{duration} seconds")
+            $g.report("myg.parsetime", duration)
 
             @tabs_parse = tabs_parse
-
+            @mytabs = mytabs
             mustache :parse 
         end
 
