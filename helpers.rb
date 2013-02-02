@@ -10,7 +10,6 @@ module Mygoogle
         end
 
         def parsePrefs
-
             start_time = Time.now
 
             pref_file = "./data/iGoogle-settings.xml"
@@ -113,5 +112,65 @@ module Mygoogle
             # $logger.debug(processed_feed[0])
             processed_feed
         end
+
+        # fe
+        def parse(tabs)
+
+            $g.report('myg.init', 1)
+            start_time = Time.now
+            num_feeds = 0 
+            tabs_parse = []
+            mytabs = {}    # trying out storing it as a hash
+
+            tabs.each {|tab|
+
+                tname = tab[:tabname]
+                tab_temp = []
+                mytabs[tname.downcase.to_sym] = {}
+                tab_feeds = 0
+
+                $logger.info("Fetch RSS feeds in #{tname}")
+
+                tab[:tabrss].each {|rss|
+
+                    # TODO
+                    break if tab_feeds > 1
+                    # break if num_feeds > 0
+
+                    $logger.info("\tFetching #{rss}")
+
+                    res = self.fetchFeed(rss)
+
+                    tab_feeds = tab_feeds + 1
+                    num_feeds = num_feeds + 1
+
+                    feed_title = res.nil? ? "untitled" : res.title
+
+                    pfeed = processFeed(res) 
+                    f = { 
+                        :feed_title => feed_title,
+                        :feed_data  => pfeed 
+                    }
+                    tab_temp << f
+
+                    mytabs[tname.downcase.to_sym] = f
+
+                } # end of each tabrss
+
+                tabs_parse << { 
+                    :tab_name => tname,
+                    :tab_data => tab_temp
+                }
+            } # end of all tabs
+
+            duration = Time.now - start_time
+            $logger.info("Parsed #{num_feeds} feed; took #{duration} seconds")
+            $g.report("myg.parsetime", duration)
+
+            return [ tabs_parse , mytabs ]
+        end
+
+
+
     end
 end

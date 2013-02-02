@@ -3,14 +3,5 @@ module Mygoogle::Views
 
 
 
-        def tabhash
-            @mytabs
-        end
-
-        def tabhashkeys
-            @mytabs.keys.map { |t| t.to_s }
-        end
-
-
    end 
 end

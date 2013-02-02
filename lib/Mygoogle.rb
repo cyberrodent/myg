@@ -1,8 +1,5 @@
 module Mygoogle
-   class << self
+    class << self
 
-
-
-
-   end
+    end
 end
