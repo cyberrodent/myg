@@ -7,7 +7,7 @@ gem "mustache"
 gem "sinatra"
 gem "json"
 gem "i18n", '~> 0.6'
-gem "feedtools"
+# gem "feedtools"
 gem "feedzirra"
 gem "statsd-ruby"
 
