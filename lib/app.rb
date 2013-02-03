@@ -18,17 +18,13 @@ module Mygoogle
         set :static, true
 
         before do
-            # setup()
-            # puts "before"
-            # $logger.info("before")
-            pass
+            @tabs = parsePrefs()
         end
 
         get '/' do
             mytabs = {}
 
-            @tabs = parsePrefs()
-            tabs.each {|tab|
+            @tabs.each {|tab|
                 tname = tab[:tabname]
                 mytabs[tname.downcase.to_sym] = {
                    :tab_name => tname,
@@ -41,16 +37,13 @@ module Mygoogle
         end
 
         get '/tabs/:tname' do |tname|
+            @tabs_parse, @mytabs = parse(@tabs, tname)
 
-            "well. #{tname} how was that?" 
+            mustache :parse
         end
 
         get '/parse' do
-            tabs = parsePrefs()
-
-            @tabs_parse, @mytabs = parse tabs
-
-
+            @tabs_parse, @mytabs = parse @tabs
             mustache :parse 
         end
 

@@ -114,7 +114,7 @@ module Mygoogle
         end
 
         # fe
-        def parse(tabs)
+        def parse(tabs, gettab = nil)
 
             $g.report('myg.init', 1)
             start_time = Time.now
@@ -123,8 +123,14 @@ module Mygoogle
             mytabs = {}    # trying out storing it as a hash
 
             tabs.each {|tab|
-
                 tname = tab[:tabname]
+
+                unless gettab.nil?
+                    if gettab != tname.downcase
+                        next
+                    end
+                end
+
                 tab_temp = []
                 mytabs[tname.downcase.to_sym] = {}
                 tab_feeds = 0
