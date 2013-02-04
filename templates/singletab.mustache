@@ -1,0 +1,12 @@
+{{# pt}}
+ <h1>{{ tab_name }}</h1>
+    {{# tab_data }}
+        <div>
+        <b> {{ feed_title.upcase }} </b>
+        {{# feed_data }}
+            <p><a href="{{ url }}" target="{{feed_title}}">{{{ title}}}</a> <span>{{{ summary }}}</span> </p>
+        
+        {{/ feed_data }}
+        </div>
+    {{/ tab_data }}
+{{/ pt }}

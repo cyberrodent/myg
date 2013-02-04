@@ -20,9 +20,6 @@ require 'mustache/sinatra'
 base_dir = File.dirname(File.dirname(__FILE__))
 $LOAD_PATH.unshift base_dir unless $LOAD_PATH.include? base_dir
 
-
-
-
 require './helpers'
 require './lib/app'
 require './lib/mygoogle'

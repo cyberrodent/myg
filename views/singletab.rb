@@ -1,9 +1,5 @@
 module Mygoogle::Views
-    class Parse < Layout
-
-        def tabs
-            @tabs_parse
-        end
+    class Singletab < Layout
 
         def tabhash
             @mytabs
@@ -12,5 +8,9 @@ module Mygoogle::Views
         def tabhashkeys
             @mytabs.keys.map { |t| t.to_s }
         end
-    end
+
+        def pt
+            @tabs_parse
+        end
+    end 
 end

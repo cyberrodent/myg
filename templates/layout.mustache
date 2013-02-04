@@ -1,7 +1,32 @@
-BEFORE
+<style>
+img { 
+    display : none; 
+    margin : 0; 
+    padding : 0;
+} 
+p { margin: 5px 0; 
+    padding: 0;
+}
+p > a { 
+ font-weight: bold;
+}
+b {
+    display: inline-block;
+    margin: 10px 0;
+}
 
+span > a { font-weight: normal; }
+
+</style>
+
+<div>
+<a href="/">HOME</a>
+</div>
+<hr />
 
 {{{ yield }}}
 
-
-AFTER
+<hr />
+<div>
+<a href="/">HOME</a>
+</div>

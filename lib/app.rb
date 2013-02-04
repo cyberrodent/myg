@@ -23,12 +23,11 @@ module Mygoogle
 
         get '/' do
             mytabs = {}
-
             @tabs.each {|tab|
                 tname = tab[:tabname]
                 mytabs[tname.downcase.to_sym] = {
-                   :tab_name => tname,
-                   :tab_data => []    
+                   'tab_name' => tname,
+                   'tab_data' => []    
                 }
             }
             @mytabs = mytabs
@@ -39,11 +38,13 @@ module Mygoogle
         get '/tabs/:tname' do |tname|
             @tabs_parse, @mytabs = parse(@tabs, tname)
 
-            mustache :parse
+            mustache :singletab
+
         end
 
         get '/parse' do
             @tabs_parse, @mytabs = parse @tabs
+
             mustache :parse 
         end
 

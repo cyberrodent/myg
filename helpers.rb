@@ -5,10 +5,16 @@ require 'sinatra/base'
 module Mygoogle
     module Helpers
 
+        #
+        # Wrapper to global logging utility
+        #
         def mylog(str, level = "INFO")
             $logger.info(str)
         end
 
+        #
+        # parse the igoogle xml settings file
+        #
         def parsePrefs
             start_time = Time.now
 
@@ -55,7 +61,11 @@ module Mygoogle
             myprefs
         end
 
+        #
+        # fetch a RSS/Atom feed
+        #
         def fetchFeed(feed_url)
+
             timeout_in_seconds = 9
             $g.report('myg.fetch' ,1)
             $statsd.increment('fetch', 1)
@@ -70,9 +80,8 @@ module Mygoogle
                 feed = Feedzirra::Feed.fetch_and_parse(feed_url, fetch_options)
 
                 duration = Time.now - start_time
-                $logger.info("Fetch took #{duration}") 
-
                 duration_ms = duration * 1000
+                $logger.info("\tFetch took #{duration}") 
                 $statsd.timing('fetching', "#{duration_ms}")
 
             rescue
@@ -80,9 +89,9 @@ module Mygoogle
                 $g.report('myg.fetch_error', 1)
                 return nil
             end
-            begin
 
-                original_feed = feed
+            begin
+                original_feed = feed # keep an unsanitized copy in case we need it later
                 feed.sanitize_entries!
                 # $logger.info("Fetched Feed: #{feed.title}")
                 # $logger.info("counted #{feed.entries.length} articles")
@@ -95,6 +104,10 @@ module Mygoogle
             feed
         end
 
+        #
+        # returns the first how_many items from the feed as an
+        # array of a renderable hash
+        # 
         def processFeed(feed, how_many = 6)
             processed_feed = []
             if feed.nil?
@@ -102,10 +115,10 @@ module Mygoogle
             end
             feed.entries[0..how_many].each {|e|
                 processed_feed << { 
-                    :feed_title => feed.title,
-                    :title => e.title,
-                    :url   => e.url,
-                    :summary => processed_feed.count < 1 ? e.summary  : ""
+                    'feed_title' => feed.title,
+                    'title' => e.title,
+                    'url'   => e.url,
+                    'summary' => processed_feed.count < 1 ? e.summary  : ""
                 }
             }
             
@@ -113,49 +126,50 @@ module Mygoogle
             processed_feed
         end
 
-        # fe
+        # fetch and parse feeds
+        # defaults to all feeds unless you tell me a feed to get
         def parse(tabs, gettab = nil)
-
-            $g.report('myg.init', 1)
             start_time = Time.now
+
             num_feeds = 0 
             tabs_parse = []
-            mytabs = {}    # trying out storing it as a hash
+            mytabs = {} # trying out storing it as a hash
+
+            $g.report('myg.init', 1)
 
             tabs.each {|tab|
                 tname = tab[:tabname]
-
                 unless gettab.nil?
                     if gettab != tname.downcase
+                        $logger.info("Skipping #{tname}")
                         next
                     end
                 end
+
+                $logger.info("Fetch RSS feeds in #{tname}")
 
                 tab_temp = []
                 mytabs[tname.downcase.to_sym] = {}
                 tab_feeds = 0
 
-                $logger.info("Fetch RSS feeds in #{tname}")
-
                 tab[:tabrss].each {|rss|
 
-                    # TODO
-                    break if tab_feeds > 1
-                    # break if num_feeds > 0
+                    # FIXME
+                    # next if tab_feeds > 2 
 
                     $logger.info("\tFetching #{rss}")
 
-                    res = self.fetchFeed(rss)
+                    res = fetchFeed(rss)
 
                     tab_feeds = tab_feeds + 1
                     num_feeds = num_feeds + 1
 
                     feed_title = res.nil? ? "untitled" : res.title
 
-                    pfeed = processFeed(res) 
+                    pfeed = processFeed(res, 6) 
                     f = { 
-                        :feed_title => feed_title,
-                        :feed_data  => pfeed 
+                        'feed_title' => feed_title,
+                        'feed_data'  => pfeed 
                     }
                     tab_temp << f
 
@@ -164,8 +178,8 @@ module Mygoogle
                 } # end of each tabrss
 
                 tabs_parse << { 
-                    :tab_name => tname,
-                    :tab_data => tab_temp
+                    'tab_name' => tname,
+                    'tab_data' => tab_temp
                 }
             } # end of all tabs
 
@@ -175,8 +189,6 @@ module Mygoogle
 
             return [ tabs_parse , mytabs ]
         end
-
-
 
     end
 end
