@@ -2,7 +2,7 @@ myg is a replacement for iGoogle
 
 It is a sinatra application
 
-provide your exported iGoogle preferences and this will parse it to get set up.
+provide your exported iGoogle preferences and this will parse it to get set up.  You can export your settings from http://www.google.com/ig/settings at the bottom of the page.
 
 Still in early development.
 
