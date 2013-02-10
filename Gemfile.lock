@@ -36,6 +36,7 @@ GEM
     rack-test (0.6.2)
       rack (>= 1.0)
     rake (10.0.3)
+    redis (3.0.2)
     rubyzip (0.9.9)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
@@ -67,5 +68,6 @@ DEPENDENCIES
   nokogiri (~> 1.4.7)
   rack
   rake
+  redis
   sinatra
   statsd-ruby
