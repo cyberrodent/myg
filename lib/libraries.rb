@@ -7,6 +7,7 @@ require 'benchmark'
 # Pick a Feed handling library
 # require 'feed_tools'
 require 'feedzirra'
+require 'redis'
 
 # Pick a logging library
 require 'log4r'
@@ -26,6 +27,9 @@ require './lib/mygoogle'
 require "./lib/graphite"
 require "./views/layout"
 
+#
+# I am new/bad at Ruby - these should not be globals if we can help it
+#
 
 # Setup a global logger
 $logger = Log4r::Logger.new('APPLOG')
@@ -38,5 +42,3 @@ $statsd.namespace = 'myp'
 $statsd.count('init', 1)
 
 $g = Graphite.new('machsheva.home')
-
-

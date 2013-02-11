@@ -9,7 +9,7 @@ module Mygoogle
         # Wrapper to global logging utility
         #
         def mylog(str, level = "INFO")
-            $logger.info(str)
+            # $logger.info(str)
         end
 
         #
@@ -31,7 +31,7 @@ module Mygoogle
             # o = ""
             titles.each {|t| 
                 tabname = t.key?("title") ? t.xpath("@title") : false
-                if tabname 
+                if tabname && (tabname.text.downcase != 'developer tools' && tabname.text.downcase != 'webmaster tools')
                     temp_tab = []
                     # o += "<h2>#{tabname}</h2>"
                     sections = t.xpath("Section")
@@ -51,7 +51,7 @@ module Mygoogle
                     myprefs << { 
                         :tabname =>  t['title'],
                         :tabrss  => temp_tab 
-                    } 
+                    }
                 end
             }
 

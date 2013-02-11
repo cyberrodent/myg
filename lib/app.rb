@@ -19,6 +19,10 @@ module Mygoogle
 
         before do
             @tabs = parsePrefs()
+            @redis = Redis.new
+
+            @user_key = "kolber01"
+
         end
 
         get '/' do
@@ -38,12 +42,17 @@ module Mygoogle
         get '/tabs/:tname' do |tname|
             @tabs_parse, @mytabs = parse(@tabs, tname)
 
+            tab_key = "#{@user_key}-#{tname}"
+            @redis.set(tab_key, @tabs_parse)
+
             mustache :singletab
 
         end
 
         get '/parse' do
             @tabs_parse, @mytabs = parse @tabs
+
+            @redis.set(@user_key, @tabs_parse)
 
             mustache :parse 
         end
