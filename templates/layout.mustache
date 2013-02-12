@@ -1,32 +1,26 @@
-<style>
-img { 
-    display : none; 
-    margin : 0; 
-    padding : 0;
-} 
-p { margin: 5px 0; 
-    padding: 0;
-}
-p > a { 
- font-weight: bold;
-}
-b {
-    display: inline-block;
-    margin: 10px 0;
-}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="/root.css">
+    <title>MyG</title>
+</head>
+<body>
+    <header>
+        <nav>
+        <a href="/">HOME</a>
+        </nav>
+    </header>
+    <hr />
+        
+        {{{ yield }}}
+        
+        <hr />
+        <footer>
+            <nav>
+                <a href="/">HOME</a>
+            </nav>
+        </footer>
 
-span > a { font-weight: normal; }
 
-</style>
-
-<div>
-<a href="/">HOME</a>
-</div>
-<hr />
-
-{{{ yield }}}
-
-<hr />
-<div>
-<a href="/">HOME</a>
-</div>
+</body>

@@ -1,12 +1,22 @@
-{{# pt}}
- <h1>{{ tab_name }}</h1>
-    {{# tab_data }}
-        <div>
-        <b> {{ feed_title.upcase }} </b>
+{{# pt }}
+
+<section>
+    <h1>{{ tab_name }}</h1>
+    <a href="/fetch/{{ tab_name.downcase }}">refresh</a>
+    {{# tab_data }} 
+
+    <div class="holder">
+        <h2>{{ feed_title.upcase.strip }}</h2>
+        <div class="feed">
         {{# feed_data }}
-            <p><a href="{{ url }}" target="{{feed_title}}">{{{ title}}}</a> <span>{{{ summary }}}</span> </p>
-        
+            <article>
+                <a href="{{ url }}" target="{{tab_name}}">{{{ title}}}</a>
+                <p class="summary">{{{ summary }}}</p>
+            </article>
         {{/ feed_data }}
         </div>
+    </div>
     {{/ tab_data }}
+</section>
+
 {{/ pt }}

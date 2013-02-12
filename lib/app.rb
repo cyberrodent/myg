@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'mustache/sinatra'
+require 'json'
 
 module Mygoogle
 
@@ -21,6 +22,7 @@ module Mygoogle
             @tabs = parsePrefs()
             @redis = Redis.new
 
+            # TODO: get this from a login or something
             @user_key = "kolber01"
 
         end
@@ -40,20 +42,41 @@ module Mygoogle
         end
 
         get '/tabs/:tname' do |tname|
-            @tabs_parse, @mytabs = parse(@tabs, tname)
 
             tab_key = "#{@user_key}-#{tname}"
-            @redis.set(tab_key, @tabs_parse)
+            res = @redis.get(tab_key)
+
+            if res.nil?
+                @tabs_parse, @mytabs = parse(@tabs, tname)
+                json_data = @tabs_parse.to_json
+                @redis.set(tab_key, json_data)
+            else
+                @tabs_parse = JSON.parse(res)
+            end
 
             mustache :singletab
 
         end
 
+
+
+        get '/fetch/:tname' do |tname|
+
+            tab_key = "#{@user_key}-#{tname}"
+
+            @tabs_parse, @mytabs = parse(@tabs, tname)
+            json_data = @tabs_parse.to_json
+            @redis.set(tab_key, json_data)
+
+            "ok"
+
+        end
+
+
+
         get '/parse' do
             @tabs_parse, @mytabs = parse @tabs
-
             @redis.set(@user_key, @tabs_parse)
-
             mustache :parse 
         end
 
