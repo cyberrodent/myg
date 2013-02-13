@@ -1,11 +1,16 @@
-{{# pt }}
 
+
+{{# pt }}
+<div class="twelve column">
 <section>
+
     <h1>{{ tab_name }}</h1>
     <a href="/fetch/{{ tab_name.downcase }}">refresh</a>
-    {{# tab_data }} 
 
-    <div class="holder">
+    <div class="row">
+    {{# tab_data }} 
+    <div class="four column">
+    <div class="holder ">
         <h2>{{ feed_title.upcase.strip }}</h2>
         <div class="feed">
         {{# feed_data }}
@@ -16,7 +21,12 @@
         {{/ feed_data }}
         </div>
     </div>
+    </div>
     {{/ tab_data }}
-</section>
 
+</div>
+</section>
+</div>
 {{/ pt }}
+
+

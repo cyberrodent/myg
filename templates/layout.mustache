@@ -3,24 +3,33 @@
 <head>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="/root.css">
+    <link rel="stylesheet" type="text/css" href="/foundation/stylesheets/foundation.css">
     <title>MyG</title>
+
+     <script src="/foundation/javascripts/modernizr.foundation.js"></script>
 </head>
 <body>
+    <div class="row">
+
     <header>
         <nav>
         <a href="/">HOME</a>
         </nav>
-    </header>
-    <hr />
-        
+        </header>
+
+    </div>
+
+    <div class="row">   
         {{{ yield }}}
+    </div>
         
-        <hr />
+
+    <div class="row">
         <footer>
             <nav>
                 <a href="/">HOME</a>
             </nav>
         </footer>
-
+    </div>
 
 </body>

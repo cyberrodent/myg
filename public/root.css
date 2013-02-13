@@ -21,42 +21,55 @@ section article {
 }
 
 section  article:hover {
-    background-color: #ddd;
+    background-color: #ffc;
     border-left: 2px solid red;
 }
 
 section article a {
     font-weight: bold;
+    color: #009;
+}
+
+section article a:hover {
+    color:#900;
 }
 section article p.summary {
     display: inline;
+    line-height: 1.1em;
 }
-section article p.summary a {
-    display: none; 
+section article p a {
+    color: #03f;
+    font-weight: normal;
 }
 
+section article p {
+    padding: 0;
+    margin: 0;
+    line-height: 1.0em;
+}
 
 
 section div.holder {
-    width: 360px;
+/*
+ width: 360px;
     float: left;
     clear: none;
+    */
 }
 
 
 section div.holder h2 {
     font-size:19px;
     line-height: 21px;
-    margin: 18px 0 0px 0;
+    margin: 18px 0 4px 0;
     background-color: #fff;
     border-top: 1px solid black;
     border-left: 1px solid black;
     padding-top: 2px;
     padding-left: 6px;
-    padding-bottom:0;
+    padding-bottom:4px;
     padding-right:0;
     height: 23px;
-    width: 360px;
     overflow: hidden;
 }
 
@@ -65,10 +78,8 @@ section div.holder h2 {
 
 
 section div.holder div.feed {
-    width: 348px;
     max-height: 250px;
     overflow: auto;
-    width: 350px;
     padding: 0;
     margin: 0;
 }
