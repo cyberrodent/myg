@@ -118,7 +118,7 @@ module Mygoogle
                     'feed_title' => feed.title,
                     'title' => e.title,
                     'url'   => e.url,
-                    'summary' => processed_feed.count < 1 ? e.summary  : ""
+                    'summary' => processed_feed.count < how_many ? e.summary  : ""
                 }
             }
             

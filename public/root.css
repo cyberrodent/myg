@@ -3,7 +3,7 @@ hr {
     clear: both;
 }
 section {
-    font-size: 13px;
+    /* font-size: 13px; */
     font-family: arial, helvetica;
     padding: 7px;
     display: block;
@@ -16,7 +16,7 @@ section article {
     margin : 0px 0 5px 0;
     padding: 2px 0 0 7px;
     border-left: 2px solid white;
-    max-height:125px;
+
     overflow: hidden;
 }
 
@@ -35,7 +35,7 @@ section article a:hover {
 }
 section article p.summary {
     display: inline;
-    line-height: 1.1em;
+    line-height: 1.2em;
 }
 section article p a {
     color: #03f;
@@ -58,7 +58,7 @@ section div.holder {
 }
 
 
-section div.holder h2 {
+section div.hold--er h2 {
     font-size:19px;
     line-height: 21px;
     margin: 18px 0 4px 0;
@@ -78,7 +78,7 @@ section div.holder h2 {
 
 
 section div.holder div.feed {
-    max-height: 250px;
+    
     overflow: auto;
     padding: 0;
     margin: 0;

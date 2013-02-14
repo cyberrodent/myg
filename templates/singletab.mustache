@@ -9,13 +9,13 @@
 
     <div class="row">
     {{# tab_data }} 
-    <div class="four column">
+    <div class="six column">
     <div class="holder ">
-        <h2>{{ feed_title.upcase.strip }}</h2>
+        <h3>{{ feed_title.upcase.strip }}</h3>
         <div class="feed">
         {{# feed_data }}
             <article>
-                <a href="{{ url }}" target="{{tab_name}}">{{{ title}}}</a>
+                <h5><a href="{{ url }}" target="{{tab_name}}">{{{ title}}}</a></h5>
                 <p class="summary">{{{ summary }}}</p>
             </article>
         {{/ feed_data }}
