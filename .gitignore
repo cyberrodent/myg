@@ -4,3 +4,4 @@ tmp/restart.txt
 data/*
 .DS_Store
 .rvmrc
+.powrc
