@@ -2,3 +2,5 @@
 log/*.log
 tmp/restart.txt
 data/*
+.DS_Store
+.rvmrc
