@@ -10,7 +10,17 @@ module Mygoogle::Views
         end
 
         def pt
-            @tabs_parse
+            @tabs_parse.each{ |tab|
+                puts "++++++"
+                tab[1].each { |feed|
+                    puts "     __ #{feed['feed_title']} "
+                    if !feed['feed_data'].nil? 
+                        if !feed['feed_data'][0].nil?
+                            feed['feed_data'][0]['summary'] = feed['feed_data'][0]['summary'].gsub(/<\/?[^>]*>/, "")[0 .. 40]
+                        end
+                    end
+                }
+            }
         end
     end 
 end

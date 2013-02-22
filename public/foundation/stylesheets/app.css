@@ -18,8 +18,22 @@
 /* -----------------------------------------
    Page Name 1
 ----------------------------------------- */
+.holder h3 {
+    background-color: #999;
+    padding: 3px;
+    display: block;
+    overflow: hidden;
+}
 
+.holder article h5 {
+    font-size: 1.2em;
+    line-height: 1.1em;
+    margin:5px 0 0 0;
+}
 
+.holder article h5 a {
+    color: #039;
+}
 
 
 /* -----------------------------------------

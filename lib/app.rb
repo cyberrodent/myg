@@ -3,10 +3,8 @@ require 'mustache/sinatra'
 require 'json'
 
 module Mygoogle
-
     class App < Sinatra::Base
         register Mustache::Sinatra
-
         helpers Mygoogle::Helpers
 
         set :mustache, {
@@ -24,7 +22,6 @@ module Mygoogle
 
             # TODO: get this from a login or something
             @user_key = "kolber01"
-
         end
 
         get '/' do
@@ -58,20 +55,36 @@ module Mygoogle
 
         end
 
+        get '/fetch/all' do
+            out = ""
+            @tabs_parse, @mytabs = parse(@tabs)
+            @tabs_parse.each{|tab|
+                out += tab['tab_name']
+                tname = tab['tab_name'].downcase
 
+
+                
+                tab_key = "#{@user_key}-#{tname}"
+                json_data = tab.to_json
+                @redis.set(tab_key, json_data)
+
+                out += "<hr />"
+            }
+            out 
+        end
 
         get '/fetch/:tname' do |tname|
-
             tab_key = "#{@user_key}-#{tname}"
-
             @tabs_parse, @mytabs = parse(@tabs, tname)
             json_data = @tabs_parse.to_json
             @redis.set(tab_key, json_data)
-
             "ok"
-
         end
 
+        get '/raw/:tname' do |tname|
+            @tabs_parse, @mytabs = parse(@tabs, tname)
+            return @tabs_parse.inspect
+        end
 
 
         get '/parse' do
@@ -86,7 +99,7 @@ module Mygoogle
 
         # ---- catch all, errors and after ---- #
         get '/*' do
-            return "ALL"
+            return "CATCH ALL"
         end
 
         error do 
