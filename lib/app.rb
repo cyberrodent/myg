@@ -17,7 +17,10 @@ module Mygoogle
         set :static, true
 
         before do
-            @tabs = parsePrefs()
+
+            xmldoc = Mg.init
+            @tabs = Mg.read_prefs_xml
+
             @redis = Redis.new
 
             # TODO: get this from a login or something
