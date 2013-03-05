@@ -12,17 +12,13 @@ module Mygoogle
             :templates => 'templates/',
             :namespace => Mygoogle
         }
-
         set :public_folder, "public/"
         set :static, true
 
         before do
-
             xmldoc = Mg.init
             @tabs = Mg.read_prefs_xml
-
             @redis = Redis.new
-
             # TODO: get this from a login or something
             @user_key = "kolber01"
         end
@@ -37,15 +33,12 @@ module Mygoogle
                 }
             }
             @mytabs = mytabs
-
             mustache :home  
         end
 
         get '/tabs/:tname' do |tname|
-
             tab_key = "#{@user_key}-#{tname}"
             res = @redis.get(tab_key)
-
             if res.nil?
                 @tabs_parse, @mytabs = parse(@tabs, tname)
                 json_data = @tabs_parse.to_json
@@ -53,9 +46,7 @@ module Mygoogle
             else
                 @tabs_parse = JSON.parse(res)
             end
-
             mustache :singletab
-
         end
 
         get '/fetch/all' do
@@ -64,13 +55,9 @@ module Mygoogle
             @tabs_parse.each{|tab|
                 out += tab['tab_name']
                 tname = tab['tab_name'].downcase
-
-
-                
                 tab_key = "#{@user_key}-#{tname}"
                 json_data = tab.to_json
                 @redis.set(tab_key, json_data)
-
                 out += "<hr />"
             }
             out 
