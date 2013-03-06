@@ -1,3 +1,8 @@
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+
+
 require 'rake/testtask'
 
 task :default => :test
@@ -24,7 +29,12 @@ namespace :myg do
     }
   end
 
-
+  task :fetch do
+      xmldoc = Mg.init
+      tabs = Mg.read_prefs_xml
+      parsed = Mg.process(tabs, "home")
+      puts parsed.inspect
+  end
 
 
 end # end of namespace :myg
