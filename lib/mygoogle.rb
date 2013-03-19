@@ -3,13 +3,22 @@ require 'nokogiri'
 require 'json'
 require 'feedzirra'
 
+
+
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
 
 
   @pref_file = "./data/iGoogle-settings.xml"
   @doc = nil
+  @mysql_opts = {
+    :host => "localhost",
+    :user => "myg",
+    :pass => "myg!pass",
+    :dbname => "mygoogle",
 
+    :schema_file => "./myg.sql"
+  }
   class << self
     # read xml file and set @doc to the Nokogiri XML Document
     # Also remove namespces
@@ -54,7 +63,62 @@ module Mg
       }
       myprefs
     end
-    
+
+
+    def dbconn(opts)
+        require "mysql"
+        begin
+            db = Mysql.new(opts[:host], opts[:user], opts[:pass], opts[:dbname]);
+        rescue Mysql::Error
+            p("can't connect to this database: #{opts[:host]}")
+            db = nil
+        end
+        db
+    end
+
+
+
+
+
+    # Public: mysql_store_user_prefs
+    #
+    # given the right input
+    # store the user's preferences into the mysql backend
+    # returns indicator of success tbd
+    def mysql_store_user_prefs(opts)
+
+        make_user_sql = "INSERT INTO users (`user_name`) VALUES ('jkolber')"
+        last_insert_sql = "SELECT LAST_INSERT_ID()"
+        clear_user_tab_sql = "DELETE FROM `user_tab` WHERE user_id=?"
+        add_tab_sql = "INSERT INTO user_tab (user_id, tab_name) VALUES (?, ?)"
+
+        
+        
+        begin
+            db = dbconn(@mysql_opts)
+
+            # make_user = db.prepare(make_user_sql)
+            # make_user.execute
+            # last_id = db.query(last_insert_sql)
+            # p last_id
+
+            clear_tabs = db.prepare(clear_user_tab_sql)
+            clear_tabs.execute 1
+
+            add_tab = db.prepare(add_tab_sql)
+
+            opts.each { |tab|
+
+                
+                add_tab.execute 1, tab[:tabname] 
+                p tab[:tabname]
+                p tab[:tabrss].join(" ")
+            }
+        ensure
+            db.close
+        end
+    end
+
     def fetch(url)
         options = {
             :timeout => 10

@@ -29,6 +29,7 @@ namespace :myg do
     }
   end
 
+  desc "fetches a tab or all tabs"
   task :fetch do
       xmldoc = Mg.init
       tabs = Mg.read_prefs_xml
@@ -36,5 +37,11 @@ namespace :myg do
       puts parsed.inspect
   end
 
+  desc "test out new functions"
+    task :it do
+        xmldoc = Mg.init
+        tabs = Mg.read_prefs_xml
 
+        Mg.mysql_store_user_prefs(tabs)
+    end
 end # end of namespace :myg

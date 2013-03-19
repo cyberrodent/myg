@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "mysql"
 gem "log4r"
 gem "rake"
 gem "rack"
