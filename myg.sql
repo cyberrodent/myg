@@ -5,7 +5,7 @@ USE `mygoogle`;
 
 
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
     `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_name` varchar(64),
@@ -16,13 +16,13 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `user_tab`;
 CREATE TABLE `user_tab` (
     user_id int(11) UNSIGNED NOT NULL,
-    tab_id  int(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    tab_id  int(11) UNSIGNED NOT NULL,
     tab_name varchar(64),
     PRIMARY KEY (user_id, tab_id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8; 
 
-DROP TABLE IF EXISTS `tab`;
-CREATE TABLE `tab` (
+DROP TABLE IF EXISTS `feeds`;
+CREATE TABLE `feeds` (
     user_id int(11) UNSIGNED NOT NULL,
     tab_id int(11) UNSIGNED NOT NULL,
     position int(4) UNSIGNED NOT NULL,
@@ -30,4 +30,4 @@ CREATE TABLE `tab` (
     PRIMARY KEY (user_id, tab_id, position)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
-
+INSERT INTO users (`user_name`) VALUES ('jkolber');
