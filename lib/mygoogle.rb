@@ -19,6 +19,25 @@ module Mg
 
     :schema_file => "./myg.sql"
   }
+
+  # SQL QUERIES GENERAL
+  @@last_insert_sql = "SELECT LAST_INSERT_ID()"
+  @@feed_report = "SELECT a.*, b.tab_name FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id"
+  @@get_user_sql = "SELECT b.tab_name , a.position, a.url FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id AND a.user_id=? ORDER BY a.tab_id, a.position"
+  @@get_user_tab_sql = "SELECT b.tab_name , a.position, a.url FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id AND a.user_id=? AND a.tab_id=? ORDER BY a.tab_id, a.position"
+
+  # SQL QUERIES users TABLE
+  @@make_user_sql = "INSERT INTO users (`user_name`) VALUES ('jkolber')"
+
+  # SQL QUERIES user_tab TABLE
+  @@add_tab_sql =        "INSERT INTO user_tab (user_id, tab_id, tab_name) VALUES (?, ?, ?)"
+  @@clear_user_tab_sql = "DELETE FROM `user_tab` WHERE user_id=?"
+
+  # SQL QUERIES feeds TABLE
+  @@clear_user_feeds_sql = "DELETE FROM `feeds` WHERE user_id=? AND tab_id=?"
+  @@add_feed_sql =         "INSERT INTO feeds (`user_id`, `tab_id`, `position`, `url`) VALUES (?, ?, ?, ?)"
+
+
   class << self
     # read xml file and set @doc to the Nokogiri XML Document
     # Also remove namespces
@@ -76,9 +95,38 @@ module Mg
         db
     end
 
+    def mysql_get_user_tab(tab_id)
+        begin 
+            res = []
+            db = dbconn(@mysql_opts)
+            user_id = 1
+            get_user = db.prepare(@@get_user_tab_sql)
+            get_user.execute user_id, tab_id
+
+          
+            while row = get_user.fetch do
+                res << row
+            end
+        end
+        res
+    end
 
 
+    def mysql_get_prefs
+      
+        begin 
+            res = []
+            db = dbconn(@mysql_opts)
+            user_id = 1
+            get_user = db.prepare(@@get_user_sql)
+            get_user.execute user_id
 
+            while row = get_user.fetch do
+                res << row
+            end
+        end
+        res 
+    end
 
     # Public: mysql_store_user_prefs
     #
@@ -86,33 +134,35 @@ module Mg
     # store the user's preferences into the mysql backend
     # returns indicator of success tbd
     def mysql_store_user_prefs(opts)
-
-        make_user_sql = "INSERT INTO users (`user_name`) VALUES ('jkolber')"
-        last_insert_sql = "SELECT LAST_INSERT_ID()"
-        clear_user_tab_sql = "DELETE FROM `user_tab` WHERE user_id=?"
-        add_tab_sql = "INSERT INTO user_tab (user_id, tab_name) VALUES (?, ?)"
-
-        
-        
         begin
             db = dbconn(@mysql_opts)
 
+            user_id = 1 # TODO
+
+            # todo: move me
             # make_user = db.prepare(make_user_sql)
             # make_user.execute
             # last_id = db.query(last_insert_sql)
             # p last_id
 
-            clear_tabs = db.prepare(clear_user_tab_sql)
-            clear_tabs.execute 1
+            clear_tabs = db.prepare(@@clear_user_tab_sql)
+            clear_feed = db.prepare(@@clear_user_feeds_sql)
+            add_tab    = db.prepare(@@add_tab_sql)
+            add_feed   = db.prepare(@@add_feed_sql)
+           
+            clear_tabs.execute user_id
 
-            add_tab = db.prepare(add_tab_sql)
-
+            tab_num = 0
             opts.each { |tab|
-
-                
-                add_tab.execute 1, tab[:tabname] 
+                tab_num += 1 
+                add_tab.execute user_id, tab_num, tab[:tabname] 
                 p tab[:tabname]
-                p tab[:tabrss].join(" ")
+                position = 1
+                clear_feed.execute user_id, tab_num
+                p tab[:tabrss].each{|url|
+                    add_feed.execute user_id, tab_num, position, url
+                    position = position + 1 
+                }
             }
         ensure
             db.close

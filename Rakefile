@@ -42,6 +42,8 @@ namespace :myg do
         xmldoc = Mg.init
         tabs = Mg.read_prefs_xml
 
-        Mg.mysql_store_user_prefs(tabs)
+        # r = Mg.mysql_store_user_prefs(tabs)
+        r = Mg.mysql_get_prefs
+        p r.inspect
     end
 end # end of namespace :myg
