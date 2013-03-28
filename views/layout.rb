@@ -13,6 +13,10 @@ module Mygoogle
             def pt
                 @tabs_parse
             end
+
+            def mysql_tablist
+                
+            end
         end
     end
 end

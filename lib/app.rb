@@ -18,12 +18,16 @@ module Mygoogle
         before do
             xmldoc = Mg.init
             @tabs = Mg.read_prefs_xml
+            @tabs_mysql = Mg.mysql_get_prefs
             @redis = Redis.new
             # TODO: get this from a login or something
             @user_key = "kolber01"
         end
 
         get '/' do
+
+
+            return @tabs_mysql.inspect
             mytabs = {}
             @tabs.each {|tab|
                 tname = tab[:tabname]
