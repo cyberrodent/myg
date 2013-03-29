@@ -32,6 +32,7 @@ module Mg
   # SQL QUERIES user_tab TABLE
   @@add_tab_sql =        "INSERT INTO user_tab (user_id, tab_id, tab_name) VALUES (?, ?, ?)"
   @@clear_user_tab_sql = "DELETE FROM `user_tab` WHERE user_id=?"
+  @@get_tabs_sql = "SELECT tab_name FROM user_tab WHERE user_id = ? ORDER BY tab_id"
 
   # SQL QUERIES feeds TABLE
   @@clear_user_feeds_sql = "DELETE FROM `feeds` WHERE user_id=? AND tab_id=?"
@@ -95,6 +96,23 @@ module Mg
         db
     end
 
+    def mysql_get_user_tabs
+        begin
+            res = []
+            db = dbconn(@mysql_opts)
+            user_id = 1
+            get_user = db.prepare(@@get_tabs_sql)
+            get_user.execute user_id
+
+            while row = get_user.fetch do
+                res << row[0]
+            end
+        end
+
+        res
+
+    end
+
     def mysql_get_user_tab(tab_id)
         begin 
             res = []
@@ -103,11 +121,11 @@ module Mg
             get_user = db.prepare(@@get_user_tab_sql)
             get_user.execute user_id, tab_id
 
-          
             while row = get_user.fetch do
                 res << row
             end
         end
+
         res
     end
 
@@ -117,12 +135,25 @@ module Mg
         begin 
             res = []
             db = dbconn(@mysql_opts)
-            user_id = 1
+            user_id = 1 ## FIXME THIS
             get_user = db.prepare(@@get_user_sql)
             get_user.execute user_id
 
+            last_tab = ""
+            idx = -1
             while row = get_user.fetch do
-                res << row
+
+                if row[0] != last_tab
+                    idx = idx + 1
+                    obj = {
+                        :tabname => row[0],
+                        :tabrss => [] 
+                    }
+                    res << obj
+                end
+                # find the obj at res[idx] and push row[2] onto :tabrss
+                res[idx][:tabrss] << row[2]
+                last_tab = row[0]
             end
         end
         res 

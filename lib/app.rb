@@ -17,26 +17,17 @@ module Mygoogle
 
         before do
             xmldoc = Mg.init
-            @tabs = Mg.read_prefs_xml
-            @tabs_mysql = Mg.mysql_get_prefs
+
+            # Phasing out the xml @tabs = Mg.read_prefs_xml
+            @tabs = Mg.mysql_get_prefs
+
             @redis = Redis.new
             # TODO: get this from a login or something
             @user_key = "kolber01"
         end
 
         get '/' do
-
-
-            return @tabs_mysql.inspect
-            mytabs = {}
-            @tabs.each {|tab|
-                tname = tab[:tabname]
-                mytabs[tname.downcase.to_sym] = {
-                   'tab_name' => tname,
-                   'tab_data' => []    
-                }
-            }
-            @mytabs = mytabs
+            @tabs_mysql = Mg.mysql_get_user_tabs
             mustache :home  
         end
 
@@ -68,11 +59,13 @@ module Mygoogle
         end
 
         get '/fetch/:tname' do |tname|
+
+            @tabs_parse, @mytabs = parse(@tabs, tname.downcase)
+            out = @tabs_parse[0]['tab_name']
             tab_key = "#{@user_key}-#{tname}"
-            @tabs_parse, @mytabs = parse(@tabs, tname)
-            json_data = @tabs_parse.to_json
+            json_data = @tabs_parse[0].to_json
             @redis.set(tab_key, json_data)
-            "ok"
+            "ok: #{out}"
         end
 
         get '/raw/:tname' do |tname|

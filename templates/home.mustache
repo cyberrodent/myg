@@ -4,14 +4,9 @@
 <div class="alert-box"><h1>
  -+-  MyG  -+- 
 </h1></div>
-{{# tabhashkeys }}
-
-    
-    <h2><a href="/tabs/{{ to_s }}">{{ to_s }}</a></h2>
-
-   
-
-{{/ tabhashkeys }}
+{{# mysql_tablist }}
+    <h2><a href="/tabs/{{ to_s.downcase }}">{{ to_s }}</a></h2>
+{{/ mysql_tablist }}
 </div>
 
 
