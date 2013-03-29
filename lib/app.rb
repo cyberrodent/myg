@@ -16,18 +16,22 @@ module Mygoogle
         set :static, true
 
         before do
-            xmldoc = Mg.init
 
-            # Phasing out the xml @tabs = Mg.read_prefs_xml
+            @user_key = "kolber01" # TODO: get this from somewhere
+
+            # Phasing out the xml 
+            # xmldoc = Mg.init
+            # @tabs = Mg.read_prefs_xml
+
             @tabs = Mg.mysql_get_prefs
+            @tabs_mysql = Mg.mysql_get_user_tabs
 
             @redis = Redis.new
-            # TODO: get this from a login or something
-            @user_key = "kolber01"
+
         end
 
         get '/' do
-            @tabs_mysql = Mg.mysql_get_user_tabs
+
             mustache :home  
         end
 

@@ -85,4 +85,13 @@ section div.holder div.feed {
 }
 
 
+nav {
+font-size:1.3em;
+padding:10px;
+text-align:center;
 
+}
+
+nav a {
+  color: red;
+}

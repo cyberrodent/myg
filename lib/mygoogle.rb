@@ -40,6 +40,7 @@ module Mg
 
 
   class << self
+
     # read xml file and set @doc to the Nokogiri XML Document
     # Also remove namespces
     def init
@@ -108,9 +109,7 @@ module Mg
                 res << row[0]
             end
         end
-
         res
-
     end
 
     def mysql_get_user_tab(tab_id)
@@ -125,24 +124,20 @@ module Mg
                 res << row
             end
         end
-
         res
     end
 
 
     def mysql_get_prefs
-      
         begin 
             res = []
             db = dbconn(@mysql_opts)
             user_id = 1 ## FIXME THIS
             get_user = db.prepare(@@get_user_sql)
             get_user.execute user_id
-
             last_tab = ""
             idx = -1
             while row = get_user.fetch do
-
                 if row[0] != last_tab
                     idx = idx + 1
                     obj = {
