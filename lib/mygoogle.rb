@@ -6,6 +6,9 @@
 require 'nokogiri'
 require 'json'
 require 'feedzirra'
+require 'sanitize'
+
+
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
   @pref_file = "./data/iGoogle-settings.xml"
@@ -36,6 +39,8 @@ module Mg
   @@clear_user_feeds_sql = "DELETE FROM `feeds` WHERE user_id=? AND tab_id=?"
   @@add_feed_sql =         "INSERT INTO feeds (`user_id`, `tab_id`, `position`, `url`) VALUES (?, ?, ?, ?)"
 
+  # SQL QUERIES articles TABLE
+  @@add_article_sql = "INSERT INTO article (`feed_name`, `title`, `summary`, `url`, `pubdate_timestamp`) VALUES (?, ?, ?, ?, ?)"
 
   class << self
 
@@ -200,7 +205,6 @@ module Mg
         begin
             puts "fetching Feed #{url}"
             feed = Feedzirra::Feed.fetch_and_parse(url, options)
-
         rescue
             # error with Feedzirra Feed
             puts "fetch failure"
@@ -216,27 +220,58 @@ module Mg
         feed
     end
 
-    def _process(feed, how_many)
-            show_this_many_summaries = how_many # show a summary for every article
-            processed_feed = []
-            if feed.nil?
-                return processed_feed 
-            end
-            how_many = how_many - 1
-            feed.entries[0 .. how_many ].each {|e|
-                processed_feed << { 
-                    'feed_title' => feed.title,
-                    'title' => e.title,
-                    'url'   => e.url,
-                    'pubdate' => e.published,
-                    'summary' => processed_feed.count < show_this_many_summaries ? (e.summary.nil? ? "" : e.summary)  : ""
-                }
-            }
-            processed_feed
+    def _process_mysql(f)
+        begin
+            db = dbconn(@mysql_opts)
+            add_article = db.prepare(@@add_article_sql)
+            pubdate_timestamp = f['pubdate'].to_i
+            add_article.execute f['feed_title'], f['title'], f['summary'], f['url'], pubdate_timestamp
+            p "Article added: #{f['title']}"
+            rescue Mysql::Error => e
+                if e.errno == 1062
+                    p("Article already in db: #{f['title']}")
+                else
+                    $logger.error(e.message)
+                    # raise e
+                end
+        end
     end
 
+
+    def _process(feed, how_many)
+        show_this_many_summaries = how_many # show a summary for every article
+        processed_feed = []
+        if feed.nil?
+            return processed_feed 
+        end
+        how_many = how_many - 1
+        feed.entries[0 .. how_many ].each {|e|
+
+            summary = processed_feed.count < show_this_many_summaries ? (e.summary.nil? ? "" : e.summary)  : ""
+            summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }})
+
+            f = { 
+                'feed_title' => feed.title,
+                'title' => e.title,
+                'url'   => e.url,
+                'pubdate' => e.published,
+                'summary' => summary
+            }
+            processed_feed << f 
+            _process_mysql(f)
+        }
+        processed_feed
+    end
+
+    #
+    # process 
+    # tabs : tabs data array
+    # gettab : only process tab matching this pattern
+    # 
     def process(tabs, gettab = nil)
         tabs_parse = []
+        process_limit = 10 # Max number of items per feed to process
+
         tabs.each {|tab|
             tab_name = tab[:tabname]
             # if there is a gettab value set then we
@@ -247,30 +282,25 @@ module Mg
                     next
                 end
             end
-
             temp = []
-
             tab[:tabrss].each {|feed|
 
                 res = fetch(feed)
                 feed_title = res.nil? ? "untitled" : res.title
-                processed_feed = _process(res, 10)
+                processed_feed = _process(res, process_limit)
                 f = {
                     'feed_title' => feed_title,
                     'feed_data' => processed_feed
                 }
                 temp << f
             }
-
             tabs_parse << {
                 :tab_name => tab_name,
                 :tab_data => temp
             }
         } 
-
-        tabs_parse
+        return tabs_parse
     end
-
     
   end # end self class
 end # end Mg Module

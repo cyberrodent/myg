@@ -31,3 +31,22 @@ CREATE TABLE `feeds` (
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 INSERT INTO users (`user_name`) VALUES ('jkolber');
+
+
+
+--
+--
+
+
+
+DROP TABLE IF EXISTS `article`;
+CREATE TABLE `article` (
+    id                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    feed_name          VARCHAR(255) NOT NULL DEFAULT '',
+    title               VARCHAR(196) NOT NULL DEFAULT 'untitled',
+    summary             TEXT NOT NULL DEFAULT '',
+    url                 VARCHAR(255) NOT NULL DEFAULT '',
+    pubdate_timestamp   INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (pubdate_timestamp,url),
+    INDEX (feed_name)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4;

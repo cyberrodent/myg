@@ -64,8 +64,8 @@ module Mygoogle
 
         get '/fetch/:tname' do |tname|
 
-            @tabs_parse, @mytabs = parse(@tabs, tname.downcase)
-            out = @tabs_parse[0]['tab_name']
+            @tabs_parse = Mg.process(@tabs, tname.downcase)
+            out = @tabs_parse[0][:tab_name]
             tab_key = "#{@user_key}-#{tname}"
             json_data = @tabs_parse[0].to_json
             @redis.set(tab_key, json_data)

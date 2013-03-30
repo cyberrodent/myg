@@ -12,6 +12,7 @@ gem "i18n", '~> 0.6'
 gem "feedzirra"
 gem "statsd-ruby"
 gem "redis"
+gem "sanitize"
 
 gem "nokogiri", '~> 1.4.7' 
 

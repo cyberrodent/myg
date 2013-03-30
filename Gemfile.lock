@@ -39,6 +39,9 @@ GEM
     rake (10.0.3)
     redis (3.0.2)
     rubyzip (0.9.9)
+    sanitize (2.0.3)
+      nokogiri (>= 1.4.4, < 1.6)
+      nokogiri (>= 1.4.4, < 1.6)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
     selenium-webdriver (2.29.0)
@@ -71,5 +74,6 @@ DEPENDENCIES
   rack
   rake
   redis
+  sanitize
   sinatra
   statsd-ruby

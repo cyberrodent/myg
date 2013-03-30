@@ -30,8 +30,11 @@ namespace :myg do
   desc "fetches a tab or all tabs"
   task :fetch do
       tabs = Mg.mysql_get_prefs
-      parsed = Mg.process(tabs, "home")
-      puts parsed.inspect
+      parsed = Mg.process(tabs, "tech")
+      parsed.each{ |d|
+        name = d[:tab_name]
+        data = d[:tab_data]
+      }
   end
 
   desc "test out new functions"
@@ -39,6 +42,6 @@ namespace :myg do
         tabs = Mg.mysql_get_prefs
         # r = Mg.mysql_store_user_prefs(tabs)
         r = Mg.mysql_get_prefs
-        p r.inspect
+        # p r.inspect
     end
 end # end of namespace :myg
