@@ -1,14 +1,13 @@
-
+# ----------------------------------------------------
+#
+# Library file for mygoogle (igoogle replacement)
+#
+# ----------------------------------------------------
 require 'nokogiri'
 require 'json'
 require 'feedzirra'
-
-
-
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
-
-
   @pref_file = "./data/iGoogle-settings.xml"
   @doc = nil
   @mysql_opts = {
@@ -16,7 +15,6 @@ module Mg
     :user => "myg",
     :pass => "myg!pass",
     :dbname => "mygoogle",
-
     :schema_file => "./myg.sql"
   }
 

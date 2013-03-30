@@ -2,7 +2,6 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
-
 require 'rake/testtask'
 
 task :default => :test
@@ -21,8 +20,7 @@ namespace :myg do
 
   desc "Prints the name of each tab and a list of the feed urls"  
   task :feedlist do
-    xmldoc = Mg.init
-    tabs = Mg.read_prefs_xml
+    tabs = Mg.mysql_get_prefs
     tabs.each {|tab|
         puts tab[:tabname]
         puts "\t"  + tab[:tabrss].join("\n\t")
@@ -31,17 +29,14 @@ namespace :myg do
 
   desc "fetches a tab or all tabs"
   task :fetch do
-      xmldoc = Mg.init
-      tabs = Mg.read_prefs_xml
+      tabs = Mg.mysql_get_prefs
       parsed = Mg.process(tabs, "home")
       puts parsed.inspect
   end
 
   desc "test out new functions"
     task :it do
-        xmldoc = Mg.init
-        tabs = Mg.read_prefs_xml
-
+        tabs = Mg.mysql_get_prefs
         # r = Mg.mysql_store_user_prefs(tabs)
         r = Mg.mysql_get_prefs
         p r.inspect
