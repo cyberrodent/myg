@@ -7,7 +7,7 @@ require 'nokogiri'
 require 'json'
 require 'feedzirra'
 require 'sanitize'
-
+require './lib/queries'
 
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
@@ -21,29 +21,7 @@ module Mg
     :schema_file => "./myg.sql"
   }
 
-  # SQL QUERIES GENERAL
-  @@last_insert_sql = "SELECT LAST_INSERT_ID()"
-  @@feed_report = "SELECT a.*, b.tab_name FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id"
-  @@get_user_sql = "SELECT b.tab_name , a.position, a.url FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id AND a.user_id=? ORDER BY a.tab_id, a.position"
-  @@get_user_tab_sql = "SELECT b.tab_name , a.position, a.url FROM feeds a, user_tab b WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id AND a.user_id=? AND a.tab_id=? ORDER BY a.tab_id, a.position"
-
-  # SQL QUERIES users TABLE
-  @@make_user_sql = "INSERT INTO users (`user_name`) VALUES ('jkolber')"
-
-  # SQL QUERIES user_tab TABLE
-  @@add_tab_sql =        "INSERT INTO user_tab (user_id, tab_id, tab_name) VALUES (?, ?, ?)"
-  @@clear_user_tab_sql = "DELETE FROM `user_tab` WHERE user_id=?"
-  @@get_tabs_sql = "SELECT tab_name FROM user_tab WHERE user_id = ? ORDER BY tab_id"
-
-  # SQL QUERIES feeds TABLE
-  @@clear_user_feeds_sql = "DELETE FROM `feeds` WHERE user_id=? AND tab_id=?"
-  @@add_feed_sql =         "INSERT INTO feeds (`user_id`, `tab_id`, `position`, `url`) VALUES (?, ?, ?, ?)"
-
-  # SQL QUERIES articles TABLE
-  @@add_article_sql = "INSERT INTO article (`feed_name`, `title`, `summary`, `url`, `pubdate_timestamp`) VALUES (?, ?, ?, ?, ?)"
-
   class << self
-
     # read xml file and set @doc to the Nokogiri XML Document
     # Also remove namespces
     def init
@@ -88,11 +66,15 @@ module Mg
       myprefs
     end
 
-
+    # dbconn - Connect to database
+    # 
     def dbconn(opts)
         require "mysql"
         begin
             db = Mysql.new(opts[:host], opts[:user], opts[:pass], opts[:dbname]);
+            db.options(Mysql::SET_CHARSET_NAME, 'utf8')
+            db.query("SET NAMES utf8")
+
         rescue Mysql::Error
             p("can't connect to this database: #{opts[:host]}")
             db = nil
@@ -105,7 +87,7 @@ module Mg
             res = []
             db = dbconn(@mysql_opts)
             user_id = 1
-            get_user = db.prepare(@@get_tabs_sql)
+            get_user = db.prepare(@@sqlq['get_tabs'])
             get_user.execute user_id
 
             while row = get_user.fetch do
@@ -120,7 +102,7 @@ module Mg
             res = []
             db = dbconn(@mysql_opts)
             user_id = 1
-            get_user = db.prepare(@@get_user_tab_sql)
+            get_user = db.prepare(@@sqlq['get_user_tab'])
             get_user.execute user_id, tab_id
 
             while row = get_user.fetch do
@@ -136,7 +118,7 @@ module Mg
             res = []
             db = dbconn(@mysql_opts)
             user_id = 1 ## FIXME THIS
-            get_user = db.prepare(@@get_user_sql)
+            get_user = db.prepare(@@sqlq['get_user'])
             get_user.execute user_id
             last_tab = ""
             idx = -1
@@ -168,16 +150,10 @@ module Mg
 
             user_id = 1 # TODO
 
-            # todo: move me
-            # make_user = db.prepare(make_user_sql)
-            # make_user.execute
-            # last_id = db.query(last_insert_sql)
-            # p last_id
-
-            clear_tabs = db.prepare(@@clear_user_tab_sql)
-            clear_feed = db.prepare(@@clear_user_feeds_sql)
-            add_tab    = db.prepare(@@add_tab_sql)
-            add_feed   = db.prepare(@@add_feed_sql)
+            clear_tabs = db.prepare(@@sqlq['clear_user_tab'])
+            clear_feed = db.prepare(@@sqlq['clear_user_feeds'])
+            add_tab    = db.prepare(@@sqlq['add_tab'])
+            add_feed   = db.prepare(@@sqlq['add_feed'])
            
             clear_tabs.execute user_id
 
@@ -223,7 +199,7 @@ module Mg
     def _process_mysql(f)
         begin
             db = dbconn(@mysql_opts)
-            add_article = db.prepare(@@add_article_sql)
+            add_article = db.prepare(@@sqlq['add_article'])
             pubdate_timestamp = f['pubdate'].to_i
             add_article.execute f['feed_title'], f['title'], f['summary'], f['url'], pubdate_timestamp
             p "Article added: #{f['title']}"
@@ -237,7 +213,10 @@ module Mg
         end
     end
 
-
+    # _process
+    # details of what we do when we process a feed
+    # use this to kick off additional processing of the feed
+    # - kicks off save each article to mysql archive
     def _process(feed, how_many)
         show_this_many_summaries = how_many # show a summary for every article
         processed_feed = []
