@@ -248,11 +248,11 @@ module Mg
         feed.entries[0 .. how_many ].each {|e|
 
             summary = processed_feed.count < show_this_many_summaries ? (e.summary.nil? ? "" : e.summary)  : ""
-            summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }})
+            summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }}).strip
 
             f = { 
-                'feed_title' => feed.title,
-                'title' => e.title,
+                'feed_title' => feed.title.strip,
+                'title' => Sanitize.clean(e.title).strip,
                 'url'   => e.url,
                 'pubdate' => e.published,
                 'summary' => summary

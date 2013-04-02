@@ -50,11 +50,6 @@ section article p {
 
 
 section div.holder {
-/*
- width: 360px;
-    float: left;
-    clear: none;
-    */
 }
 
 
@@ -72,26 +67,37 @@ section div.hold--er h2 {
     height: 23px;
     overflow: hidden;
 }
-
-
-
-
-
 section div.holder div.feed {
-    
     overflow: auto;
     padding: 0;
     margin: 0;
 }
 
 
-nav {
-font-size:1.3em;
-padding:10px;
-text-align:center;
 
+.row iframe {
+    margin-left:10%;
+    margin-right:10%;
+    width:80%;
+    font-size:0.8em;
+}
+
+
+nav {
+    font-size:1.3em;
+    padding:10px;
+    text-align:center;
 }
 
 nav a {
-  color: red;
+  color: #cc0000;;
 }
+nav a:hover {
+    text-decoration: underline;
+    color: #990000;
+}
+nav a.settings {
+    color: #996600;
+}
+
+

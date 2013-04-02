@@ -16,7 +16,7 @@ module Mygoogle::Views
                     puts "     __ #{feed['feed_title']} "
                     if !feed['feed_data'].nil? 
                         if !feed['feed_data'][0].nil?
-                            feed['feed_data'][0]['summary'] = feed['feed_data'][0]['summary'].gsub(/<\/?[^>]*>/, "")[0 .. 40]
+                            feed['feed_data'][0]['summary'] = feed['feed_data'][0]['summary'].gsub(/<\/?[^>]*>/, "")[0 .. 500]
                         end
                     end
                 }

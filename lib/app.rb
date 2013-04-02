@@ -31,7 +31,6 @@ module Mygoogle
         end
 
         get '/' do
-
             mustache :home  
         end
 
@@ -50,10 +49,11 @@ module Mygoogle
 
         get '/fetch/all' do
             out = ""
-            @tabs_parse, @mytabs = parse(@tabs)
+            # @tabs_parse, @mytabs = parse(@tabs)
+            @tabs_parse = Mg.process(@tabs)
             @tabs_parse.each{|tab|
-                out += tab['tab_name']
-                tname = tab['tab_name'].downcase
+                out += tab[:tab_name]
+                tname = tab[i:tab_name].downcase
                 tab_key = "#{@user_key}-#{tname}"
                 json_data = tab.to_json
                 @redis.set(tab_key, json_data)
@@ -84,9 +84,14 @@ module Mygoogle
             mustache :parse 
         end
 
+        get '/googlenews' do
 
+            mustache :googlenews
+        end
 
-
+        get '/settings' do
+            return "SETTINGS PAGE WILL BE HERE"
+        end
 
         # ---- catch all, errors and after ---- #
         get '/*' do
