@@ -53,7 +53,7 @@ module Mygoogle
             @tabs_parse = Mg.process(@tabs)
             @tabs_parse.each{|tab|
                 out += tab[:tab_name]
-                tname = tab[i:tab_name].downcase
+                tname = tab[:tab_name].downcase
                 tab_key = "#{@user_key}-#{tname}"
                 json_data = tab.to_json
                 @redis.set(tab_key, json_data)

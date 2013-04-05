@@ -229,6 +229,10 @@ module Mg
             summary = processed_feed.count < show_this_many_summaries ? (e.summary.nil? ? "" : e.summary)  : ""
             summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }}).strip
 
+            if e.title.nil?
+                e.title = "untitled"
+            end
+
             f = { 
                 'feed_title' => feed.title.strip,
                 'title' => Sanitize.clean(e.title).strip,
