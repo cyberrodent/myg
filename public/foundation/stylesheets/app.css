@@ -19,20 +19,23 @@
    Page Name 1
 ----------------------------------------- */
 .holder h3 {
-    background-color: #999;
-    padding: 3px;
+    background-color: #cc0;
+    padding: 2px 8px 1px 10px;
+    font-size:1.2em;
     display: block;
     overflow: hidden;
+    
 }
 
 .holder article h5 {
-    font-size: 1.2em;
+    font-size: 1.0em;
     line-height: 1.1em;
     margin:5px 0 0 0;
+    border-bottom: 1px solid #ccf;
+    color: #039;
 }
 
-.holder article h5 a {
-    color: #039;
+.holder article h5 {
 }
 
 

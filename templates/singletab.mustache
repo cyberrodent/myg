@@ -14,10 +14,11 @@
         <h3>{{ feed_title.upcase.strip }}</h3>
         <div class="feed">
         {{# feed_data }}
-            <article>
-                <h5><a href="{{ url }}" target="{{tab_name}}">{{{ title}}}</a></h5>
+            <article><a href="{{ url }}" target="{{tab_name}}">
+                <h5>{{{ title}}}</h5>
                 <em>{{{ pubdate }}}</em>&nbsp;&nbsp;&nbsp;<p
                 class="summary">{{{ summary }}}</p>
+                </a>
             </article>
         {{/ feed_data }}
         </div>

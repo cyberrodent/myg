@@ -7,6 +7,7 @@ section {
     font-family: arial, helvetica;
     padding: 7px;
     display: block;
+    background-color: #cccccc;
 }
 section img {
     display:none;    
@@ -14,32 +15,33 @@ section img {
 
 section article {
     margin : 0px 0 5px 0;
-    padding: 2px 0 0 7px;
-    border-left: 2px solid white;
+    padding: 1px 15px 6px 20px;
+    border-left: 2px solid #ccc;
 
     overflow: hidden;
 }
 
 section  article:hover {
-    background-color: #ffc;
-    border-left: 2px solid red;
+    background-color: #fff;
+    border-left: 2px solid #900;
+    cursor: pointer;
+
+
 }
 
-section article a {
-    font-weight: bold;
-    color: #009;
-}
+
 
 section article a:hover {
-    color:#900;
+    text-decoration: none;
 }
 section article p.summary {
     display: inline;
     line-height: 1.2em;
+    color: #000;
 }
-section article p a {
-    color: #03f;
+section article p.summary a {
     font-weight: normal;
+    color: #f00;
 }
 
 section article p {
@@ -48,8 +50,16 @@ section article p {
     line-height: 1.0em;
 }
 
+section article em {
+  font-size: 0.8em;
+  font-weight:bold;
+  color: #060;
+  font-style: normal;
+}
+
 
 section div.holder {
+
 }
 
 

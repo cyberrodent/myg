@@ -205,7 +205,7 @@ module Mg
             p "Article added: #{f['title']}"
             rescue Mysql::Error => e
                 if e.errno == 1062
-                    p("Article already in db: #{f['title']}")
+                    # p("Article already in db: #{f['title']}")
                 else
                     $logger.error(e.message)
                     # raise e
