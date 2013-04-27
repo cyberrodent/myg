@@ -112,7 +112,16 @@ module Mg
         res
     end
 
+    def mysql_set_feed_name(tab_id, position, feed_name)
+        begin
+            db = dbconn(@mysql_opts)
+            user_id = 1
+            sth = db.prepare(@@sqlq['set_feed_title_on_feed'])
+            sth.execute feed_name, user_id, tab_id, position
+            puts(feed_name, user_id, tab_id, position)
 
+        end
+    end
     def mysql_get_prefs
         begin 
             res = []
@@ -127,6 +136,7 @@ module Mg
                     idx = idx + 1
                     obj = {
                         :tabname => row[0],
+                        :tab_id => row[3],
                         :tabrss => [] 
                     }
                     res << obj
@@ -191,6 +201,7 @@ module Mg
             feed.sanitize_entries!
         rescue
             puts "problem sanitizing feed. proceeding" 
+            return nil
         end
 
         feed
@@ -217,7 +228,7 @@ module Mg
     # details of what we do when we process a feed
     # use this to kick off additional processing of the feed
     # - kicks off save each article to mysql archive
-    def _process(feed, how_many)
+    def _process(tab_id, feed, how_many)
         show_this_many_summaries = how_many # show a summary for every article
         processed_feed = []
         if feed.nil?
@@ -240,9 +251,11 @@ module Mg
                 'pubdate' => e.published,
                 'summary' => summary
             }
+
             processed_feed << f 
             _process_mysql(f)
         }
+
         processed_feed
     end
 
@@ -266,17 +279,35 @@ module Mg
                 end
             end
             temp = []
+            position = 1
             tab[:tabrss].each {|feed|
 
+                $g.report('myg.fetch', 1)
+                start_time = Time.now
                 res = fetch(feed)
+                if res.nil?
+                    next
+                end
                 feed_title = res.nil? ? "untitled" : res.title
-                processed_feed = _process(res, process_limit)
+                processed_feed = _process(tab[:tab_id], res, process_limit)
+
+                if processed_feed.nil?
+                    $g.report('myg.fetch_error', 1)
+                else
+                    mysql_set_feed_name(tab[:tab_id], position, processed_feed[0]['feed_title']) 
+                end
                 f = {
                     'feed_title' => feed_title,
                     'feed_data' => processed_feed
                 }
                 temp << f
+                position = position + 1
+                duration = Time.now - start_time
+                $g.report("myg.parsetime", duration)
             }
+
+            
+
             tabs_parse << {
                 :tab_name => tab_name,
                 :tab_data => temp

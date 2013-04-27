@@ -26,6 +26,8 @@ CREATE TABLE `feeds` (
     user_id int(11) UNSIGNED NOT NULL,
     tab_id int(11) UNSIGNED NOT NULL,
     position int(4) UNSIGNED NOT NULL,
+    is_active int(4) UNSIGNED NOT NULL DEFAULT 1,
+    feed_name varchar(255) not null default '',
     url varchar(255),
     PRIMARY KEY (user_id, tab_id, position)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;

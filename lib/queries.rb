@@ -34,7 +34,7 @@ module Mg
     FROM feeds a, user_tab b 
     WHERE a.tab_id=b.tab_id AND a.user_id = b.user_id"
 
-  @@sqlq['get_user'] = "SELECT b.tab_name , a.position, a.url 
+  @@sqlq['get_user'] = "SELECT b.tab_name , a.position, a.url, b.tab_id  
     FROM feeds a, user_tab b 
     WHERE a.tab_id=b.tab_id 
     AND a.user_id = b.user_id AND a.user_id=? 
@@ -50,5 +50,12 @@ module Mg
     AND a.tab_id=? 
     ORDER BY a.tab_id, a.position"
 
+  @@sqlq['set_tab_id_on_article'] = "";
+
+  @@sqlq['set_feed_title_on_feed'] = "UPDATE feeds 
+    SET feed_name = ? 
+    WHERE user_id = ? 
+    AND tab_id = ? 
+    AND position = ?"
 
 end
