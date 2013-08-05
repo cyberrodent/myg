@@ -16,7 +16,6 @@ module Mygoogle
         set :static, true
 
         before do
-
             @user_key = "kolber01" # TODO: get this from somewhere
 
             # Phasing out the xml 
@@ -27,7 +26,6 @@ module Mygoogle
             @tabs_mysql = Mg.mysql_get_user_tabs
 
             @redis = Redis.new
-
         end
 
         get '/' do
@@ -63,7 +61,6 @@ module Mygoogle
         end
 
         get '/fetch/:tname' do |tname|
-
             @tabs_parse = Mg.process(@tabs, tname.downcase)
             out = @tabs_parse[0][:tab_name]
             tab_key = "#{@user_key}-#{tname}"
@@ -109,5 +106,3 @@ module Mygoogle
 
     end
 end
-
-
