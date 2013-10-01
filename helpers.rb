@@ -155,7 +155,7 @@ module Mygoogle
                 tname = tab[:tabname]
                 unless gettab.nil?
                     if gettab != tname.downcase
-                        $logger.info("Skipping #{tname}")
+                        # $logger.info("Skipping #{tname}")
                         next
                     end
                 end

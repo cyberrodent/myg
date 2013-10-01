@@ -1,4 +1,4 @@
-# ----------------------------------------------------
+
 #
 # Library file for mygoogle (igoogle replacement)
 #
@@ -8,11 +8,20 @@ require 'json'
 require 'feedzirra'
 require 'sanitize'
 require './lib/queries'
+require './lib/mysqluserprefs'
 
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
+
+  include Userprefs
+  # extend Userprefs
+
+  # location of the xml file you exported from iGoogle  
   @pref_file = "./data/iGoogle-settings.xml"
+
+  # will be the NokoGiri document
   @doc = nil
+
   @mysql_opts = {
     :host => "localhost",
     :user => "myg",
@@ -22,6 +31,11 @@ module Mg
   }
 
   class << self
+
+    attr_accessor :mysql_opts
+
+      ## Methods related to handling the google XML pref file
+
     # read xml file and set @doc to the Nokogiri XML Document
     # Also remove namespces
     def init
@@ -43,12 +57,12 @@ module Mg
       # o = ""
       titles.each {|t| 
         tabname = t.key?("title") ? t.xpath("@title") : false
-        # We skip these 2 in our particular case
+        # We skip these 2 tabs: developer_tools and webmaster_tools
         if tabname && (tabname.text.downcase != 'developer tools' && tabname.text.downcase != 'webmaster tools')
           temp_tab = []                 # o += "<h2>#{tabname}</h2>"
           sections = t.xpath("Section")
           sections.each {|s|            # o += "---- new section<br>\n" 
-            modules = s.xpath("Module") # o += " ---- NEW MODULE ----\n<br>"
+            modules = s.xpath("Module") # o += "  --- NEW MODULE ----\n<br>"
             modules.each {|m| 
               modprefs = m.xpath("ModulePrefs[@xmlUrl]")
               unless modprefs[0].nil? 
@@ -65,125 +79,40 @@ module Mg
       }
       myprefs
     end
+  # Done with XML
 
-    # dbconn - Connect to database
-    # 
-    def dbconn(opts)
-        require "mysql"
-        begin
-            db = Mysql.new(opts[:host], opts[:user], opts[:pass], opts[:dbname]);
-            db.options(Mysql::SET_CHARSET_NAME, 'utf8')
-            db.query("SET NAMES utf8")
 
-        rescue Mysql::Error
-            p("can't connect to this database: #{opts[:host]}")
-            db = nil
-        end
-        db
-    end
-
+    #### Mysql-User_Prefs Start ######
     def mysql_get_user_tabs
-        begin
-            res = []
-            db = dbconn(@mysql_opts)
-            user_id = 1
-            get_user = db.prepare(@@sqlq['get_tabs'])
-            get_user.execute user_id
-
-            while row = get_user.fetch do
-                res << row[0]
-            end
-        end
-        res
+      fake_user_id = 1
+      Mysqluserprefs.get_user_tabs(fake_user_id)
     end
 
     def mysql_get_user_tab(tab_id)
-        begin 
-            res = []
-            db = dbconn(@mysql_opts)
-            user_id = 1
-            get_user = db.prepare(@@sqlq['get_user_tab'])
-            get_user.execute user_id, tab_id
-
-            while row = get_user.fetch do
-                res << row
-            end
-        end
-        res
+      Mysqluserprefs.get_user_tab(1, tab_id)
     end
 
     def mysql_set_feed_name(tab_id, position, feed_name)
-        begin
-            db = dbconn(@mysql_opts)
-            user_id = 1
-            sth = db.prepare(@@sqlq['set_feed_title_on_feed'])
-            sth.execute feed_name, user_id, tab_id, position
-            puts(feed_name, user_id, tab_id, position)
-
-        end
-    end
-    def mysql_get_prefs
-        begin 
-            res = []
-            db = dbconn(@mysql_opts)
-            user_id = 1 ## FIXME THIS
-            get_user = db.prepare(@@sqlq['get_user'])
-            get_user.execute user_id
-            last_tab = ""
-            idx = -1
-            while row = get_user.fetch do
-                if row[0] != last_tab
-                    idx = idx + 1
-                    obj = {
-                        :tabname => row[0],
-                        :tab_id => row[3],
-                        :tabrss => [] 
-                    }
-                    res << obj
-                end
-                # find the obj at res[idx] and push row[2] onto :tabrss
-                res[idx][:tabrss] << row[2]
-                last_tab = row[0]
-            end
-        end
-        res 
+      user_id = 1
+      Mysqluserprefs.set_feed_name(user_id, tab_id, position, feed_name)
     end
 
-    # Public: mysql_store_user_prefs
-    #
-    # given the right input
-    # store the user's preferences into the mysql backend
-    # returns indicator of success tbd
-    def mysql_store_user_prefs(opts)
-        begin
-            db = dbconn(@mysql_opts)
-
-            user_id = 1 # TODO
-
-            clear_tabs = db.prepare(@@sqlq['clear_user_tab'])
-            clear_feed = db.prepare(@@sqlq['clear_user_feeds'])
-            add_tab    = db.prepare(@@sqlq['add_tab'])
-            add_feed   = db.prepare(@@sqlq['add_feed'])
-           
-            clear_tabs.execute user_id
-
-            tab_num = 0
-            opts.each { |tab|
-                tab_num += 1 
-                add_tab.execute user_id, tab_num, tab[:tabname] 
-                p tab[:tabname]
-                position = 1
-                clear_feed.execute user_id, tab_num
-                p tab[:tabrss].each{|url|
-                    add_feed.execute user_id, tab_num, position, url
-                    position = position + 1 
-                }
-            }
-        ensure
-            db.close
-        end
+    def mysql_get_prefs(user_id)
+      user_id = user_id || 1
+      Mysqluserprefs.get_prefs(user_id)
     end
+    
+    def mysql_store_user_prefs(user_id, opts)
+      user_id = user_id || 10
+      Mysqluserprefs.store_user_prefs(user_id, opts)
+    end
+    #### Mysql-User_Prefs End  ######
 
+
+    
+    # Fetch and return a Feedzirra feed object for the given URL
+    # Sanitize it before returning.
+    # Return nil if anything goes wrong.
     def fetch(url)
         options = {
             :timeout => 10
@@ -196,6 +125,7 @@ module Mg
             puts "fetch failure"
             return nil
         end
+
         begin
             puts "sanitizing"
             feed.sanitize_entries!
@@ -314,6 +244,13 @@ module Mg
             }
         } 
         return tabs_parse
+    end
+
+
+    def test
+      fake_user_id = 1
+      ups = Mysqluserprefs.get_user_tabs(fake_user_id)
+      p ups.inspect
     end
     
   end # end self class

@@ -90,6 +90,11 @@ module Mygoogle
             return "SETTINGS PAGE WILL BE HERE"
         end
 
+
+
+
+
+
         # ---- catch all, errors and after ---- #
         get '/*' do
             return "CATCH ALL"

@@ -1,9 +1,12 @@
-module Mg
+module Queries
   #
   # SQL Queries for mygoogle
   #
   @@sqlq = {} # our queries
   
+  def Queries.getq(key)
+    @@sqlq[key]
+  end
 
   # SQL QUERIES users TABLE
   @@sqlq['make_user'] = "INSERT INTO users (`user_name`) VALUES ('jkolber')"
