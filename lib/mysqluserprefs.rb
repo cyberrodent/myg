@@ -1,25 +1,12 @@
 
+
+require './lib/mysql'
 require './lib/userprefs'
 require './lib/queries'
 
-class Mysqluserprefs
+class Mysqluserprefs < Mysqlcore
 
   include Userprefs
-
-
-    # dbconn - Connect to database
-    def Mysqluserprefs.dbconn(opts)
-        require "mysql"
-        begin
-            db = Mysql.new(opts[:host], opts[:user], opts[:pass], opts[:dbname]);
-            db.options(Mysql::SET_CHARSET_NAME, 'utf8')
-            db.query("SET NAMES utf8")
-        rescue Mysql::Error
-            p("Can't connect to this database: #{opts[:host]}")
-            db = nil
-        end
-        db
-    end
 
   def Mysqluserprefs.get_user_tabs(user_id)
         begin
@@ -34,7 +21,6 @@ class Mysqluserprefs
         end
         res
   end
-
 
 
   def Mysqluserprefs.get_user_tab(user_id, tab_id)

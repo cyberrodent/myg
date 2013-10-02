@@ -15,7 +15,7 @@ module Mygoogle
             end
 
             def mysql_tablist
-                @tabs_mysql
+                @tabs_data
             end
         end
     end

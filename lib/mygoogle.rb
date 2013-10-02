@@ -7,8 +7,9 @@ require 'nokogiri'
 require 'json'
 require 'feedzirra'
 require 'sanitize'
-require './lib/queries'
+require './lib/mysql'
 require './lib/mysqluserprefs'
+require './lib/mysqlarticles'
 
 # Mg is a module to collect stuff for the MyGoogle web app
 module Mg
@@ -83,9 +84,9 @@ module Mg
 
 
   
-   def get_user_tabs
-      fake_user_id = 1
-      Mysqluserprefs.get_user_tabs(fake_user_id)
+   def get_user_tabs(user_id)
+      user_id = user_id || 1
+      Mysqluserprefs.get_user_tabs(user_id)
     end
 
     def get_user_tab(tab_id)
@@ -106,33 +107,6 @@ module Mg
       user_id = user_id || 10
       Mysqluserprefs.store_user_prefs(user_id, opts)
     end
-
-
-    #### Back Compatible Mysql-User_Prefs Start ######
-    def mysql_get_user_tabs
-      fake_user_id = 1
-      Mysqluserprefs.get_user_tabs(fake_user_id)
-    end
-
-    def mysql_get_user_tab(tab_id)
-      Mysqluserprefs.get_user_tab(1, tab_id)
-    end
-
-    def mysql_set_feed_name(tab_id, position, feed_name)
-      user_id = 1
-      Mysqluserprefs.set_feed_name(user_id, tab_id, position, feed_name)
-    end
-
-    def mysql_get_prefs(user_id)
-      user_id = user_id || 1
-      Mysqluserprefs.get_prefs(user_id)
-    end
-    
-    def mysql_store_user_prefs(user_id, opts)
-      user_id = user_id || 10
-      Mysqluserprefs.store_user_prefs(user_id, opts)
-    end
-    #### Mysql-User_Prefs End  ######
 
 
     
@@ -164,20 +138,6 @@ module Mg
     end
 
     def _process_mysql(f)
-        begin
-            db = dbconn(@mysql_opts)
-            add_article = db.prepare(@@sqlq['add_article'])
-            pubdate_timestamp = f['pubdate'].to_i
-            add_article.execute f['feed_title'], f['title'], f['summary'], f['url'], pubdate_timestamp
-            p "Article added: #{f['title']}"
-            rescue Mysql::Error => e
-                if e.errno == 1062
-                    # p("Article already in db: #{f['title']}")
-                else
-                    $logger.error(e.message)
-                    # raise e
-                end
-        end
     end
 
     # _process
@@ -250,7 +210,7 @@ module Mg
                 if processed_feed.nil?
                     $g.report('myg.fetch_error', 1)
                 else
-                    mysql_set_feed_name(tab[:tab_id], position, processed_feed[0]['feed_title']) 
+                    self.set_feed_name(tab[:tab_id], position, processed_feed[0]['feed_title']) 
                 end
                 f = {
                     'feed_title' => feed_title,
@@ -269,6 +229,78 @@ module Mg
         } 
         return tabs_parse
     end
+
+
+
+
+
+
+    def parse(tabs, gettab = nil)
+            start_time = Time.now
+
+            num_feeds = 0 
+            tabs_parse = []
+            mytabs = {} # trying out storing it as a hash
+
+            $g.report('myg.init', 1)
+
+            tabs.each {|tab|
+                tname = tab[:tabname]
+                unless gettab.nil?
+                    if gettab != tname.downcase
+                        # $logger.info("Skipping #{tname}")
+                        next
+                    end
+                end
+
+                $logger.info("Fetch RSS feeds in #{tname}")
+
+                tab_temp = []
+                mytabs[tname.downcase.to_sym] = {}
+                tab_feeds = 0
+
+                tab[:tabrss].each {|rss|
+
+                    # FIXME
+                    # next if tab_feeds > 2 
+
+                    $logger.info("\tFetching #{rss}")
+
+                    res = fetchFeed(rss)
+
+                    tab_feeds = tab_feeds + 1
+                    num_feeds = num_feeds + 1
+
+                    feed_title = res.nil? ? "untitled" : res.title
+
+                    pfeed = processFeed(res, 10) 
+                    f = { 
+                        'feed_title' => feed_title,
+                        'feed_data'  => pfeed 
+                    }
+                    tab_temp << f
+
+                    mytabs[tname.downcase.to_sym] = f
+
+                } # end of each tabrss
+
+                tabs_parse << { 
+                    'tab_name' => tname,
+                    'tab_data' => tab_temp
+                }
+            } # end of all tabs
+
+            duration = Time.now - start_time
+            $logger.info("Parsed #{num_feeds} feed; took #{duration} seconds")
+            $g.report("myg.parsetime", duration)
+
+            return tabs_parse
+        end
+
+
+
+
+
 
 
     def test

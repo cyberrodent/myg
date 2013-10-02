@@ -18,7 +18,7 @@ module Mygoogle
         before do
             @user_key = "kolber01" # TODO: get this from somewhere
             @tabs = Mg.get_prefs(1)
-            @tabs_mysql = Mg.get_user_tabs
+            @tabs_data = Mg.get_user_tabs(1)
             @redis = Redis.new
         end
 
@@ -30,7 +30,7 @@ module Mygoogle
             tab_key = "#{@user_key}-#{tname}"
             res = @redis.get(tab_key)
             if res.nil?
-                @tabs_parse, @mytabs = parse(@tabs, tname)
+                @tabs_parse = parse(@tabs, tname)
                 json_data = @tabs_parse.to_json
                 @redis.set(tab_key, json_data)
             else
@@ -41,7 +41,7 @@ module Mygoogle
 
         get '/fetch/all' do
             out = ""
-            # @tabs_parse, @mytabs = parse(@tabs)
+            # @tabs_parse = parse(@tabs)
             @tabs_parse = Mg.process(@tabs)
             @tabs_parse.each{|tab|
                 out += tab[:tab_name]
@@ -64,13 +64,13 @@ module Mygoogle
         end
 
         get '/raw/:tname' do |tname|
-            @tabs_parse, @mytabs = parse(@tabs, tname)
+            @tabs_parse = parse(@tabs, tname)
             return @tabs_parse.inspect
         end
 
 
         get '/parse' do
-            @tabs_parse, @mytabs = parse @tabs
+            @tabs_parse = Mg.parse @tabs
             @redis.set(@user_key, @tabs_parse)
             mustache :parse 
         end
