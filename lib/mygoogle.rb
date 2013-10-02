@@ -82,7 +82,33 @@ module Mg
   # Done with XML
 
 
-    #### Mysql-User_Prefs Start ######
+  
+   def get_user_tabs
+      fake_user_id = 1
+      Mysqluserprefs.get_user_tabs(fake_user_id)
+    end
+
+    def get_user_tab(tab_id)
+      Mysqluserprefs.get_user_tab(1, tab_id)
+    end
+
+    def set_feed_name(tab_id, position, feed_name)
+      user_id = 1
+      Mysqluserprefs.set_feed_name(user_id, tab_id, position, feed_name)
+    end
+
+    def get_prefs(user_id)
+      user_id = user_id || 1
+      Mysqluserprefs.get_prefs(user_id)
+    end
+    
+    def store_user_prefs(user_id, opts)
+      user_id = user_id || 10
+      Mysqluserprefs.store_user_prefs(user_id, opts)
+    end
+
+
+    #### Back Compatible Mysql-User_Prefs Start ######
     def mysql_get_user_tabs
       fake_user_id = 1
       Mysqluserprefs.get_user_tabs(fake_user_id)
@@ -236,8 +262,6 @@ module Mg
                 $g.report("myg.parsetime", duration)
             }
 
-            
-
             tabs_parse << {
                 :tab_name => tab_name,
                 :tab_data => temp
@@ -249,7 +273,7 @@ module Mg
 
     def test
       fake_user_id = 1
-      ups = Mysqluserprefs.get_user_tabs(fake_user_id)
+      ups = "tsk tsk lazy"
       p ups.inspect
     end
     

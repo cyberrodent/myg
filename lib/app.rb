@@ -17,14 +17,8 @@ module Mygoogle
 
         before do
             @user_key = "kolber01" # TODO: get this from somewhere
-
-            # Phasing out the xml 
-            # xmldoc = Mg.init
-            # @tabs = Mg.read_prefs_xml
-
-            @tabs = Mg.mysql_get_prefs
-            @tabs_mysql = Mg.mysql_get_user_tabs
-
+            @tabs = Mg.get_prefs(1)
+            @tabs_mysql = Mg.get_user_tabs
             @redis = Redis.new
         end
 
