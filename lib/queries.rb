@@ -41,6 +41,7 @@ module Queries
     FROM feeds a, user_tab b 
     WHERE a.tab_id=b.tab_id 
     AND a.user_id = b.user_id AND a.user_id=? 
+    AND a.is_active = 1
     ORDER BY a.tab_id, a.position"
 
 
@@ -51,6 +52,7 @@ module Queries
     AND a.user_id = b.user_id 
     AND a.user_id=? 
     AND a.tab_id=? 
+    AND a.is_active = 1
     ORDER BY a.tab_id, a.position"
 
   @@sqlq['set_tab_id_on_article'] = "";
