@@ -26,7 +26,29 @@ module Mygoogle
             mustache :home  
         end
 
+        get '/tabs/list' do
+            headers "Access-Control-Allow-Origin" => "*"
+            headers "Content-Type" => "application/json; charset=utf8"
+            @tabs.to_json
+        end
+
+        get '/tabdata/:tname' do |tname|
+            tab_key = "#{@user_key}-#{tname}"
+            res = @redis.get(tab_key)
+            if res.nil?
+                @tabs_parse = parse(@tabs, tname)
+                json_data = @tabs_parse.to_json
+                @redis.set(tab_key, json_data)
+            else
+                @tabs_parse = JSON.parse(res)
+            end
+            headers "Access-Control-Allow-Origin" => "*"
+            headers "Content-Type" => "application/json; charset=utf8"
+            [@tabs_parse].to_json
+        end
+
         get '/tabs/:tname' do |tname|
+
             tab_key = "#{@user_key}-#{tname}"
             res = @redis.get(tab_key)
             if res.nil?
@@ -65,7 +87,7 @@ module Mygoogle
 
         get '/raw/:tname' do |tname|
             @tabs_parse = parse(@tabs, tname)
-            return @tabs_parse.inspect
+            @tabs_parse.inspect
         end
 
 
