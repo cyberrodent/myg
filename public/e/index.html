@@ -28,20 +28,26 @@
 
   </script>
 
+  <script type="text/x-handlebars" data-template-name="article">
+            <div class="article">
+                <span class="pubdate">{{article.pubdate}}</span>  
+                <div class="feed_title">{{article.feed_title}}</div>
+                <a href="{{unbound article.url}}" target='read'>{{article.title}}</a>
+
+                <div {{action 'toggle' on="click"}} class="{{bind-attr class=":summary isCompact::compact"}}">
+                    {{article.summary}}
+                </div> 
+            </div>
+
+  </script>
+
   <script type="text/x-handlebars" data-template-name="tab">
 
       {{#each item in model}}
         This is a tab page for {{item.tab_name}},
         {{#each tab_data in item.tab_data }}
-        {{#each article in tab_data.feed_data}}
-            <p class="article">
-                <div class="feed_title">{{article.feed_title}}</div>
-                <a href="{{article.url}}" target='read'>{{article.title}}</a>
-                <div class="summary">
-                    <span class="pubdate">{{article.pubdate}}: </ span>  
-                    {{article.summary}}
-                </div> 
-            </p>
+          {{#each article in tab_data.feed_data}}
+            {{partial "article"}}
           {{/each}}
         {{/each}}
       {{/each}}

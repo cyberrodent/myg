@@ -32,3 +32,11 @@ App.TabRoute = Ember.Route.extend({
         return Ember.$.getJSON(tabs_url);
     }
 });
+App.TabController = Ember.ObjectController.extend({
+    actions: {
+        toggle: function (article) {
+            console.log('hi');
+            console.log(article);
+        }
+    }
+});
