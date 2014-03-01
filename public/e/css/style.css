@@ -3,11 +3,14 @@ html, body {
     margin: 20px;
 }
 
-
+.active { 
+    font-weight: bold;
+}
 div.article {
     max-width: 500px;
     background-color: #eee;
     padding: 5px 10px 20px 10px;
+    margin-left: 200px;
 }
 
 p.article a {

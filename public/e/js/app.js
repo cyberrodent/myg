@@ -3,8 +3,10 @@ App = Ember.Application.create( {
 });
 
 App.Router.map(function() {
-  this.route("settings", { path: "/settings" });
-  this.route("tab", { path: "/tab/:tabname" });
+    this.resource("index", { path: "/" }, function () {
+        this.resource("tab", { path: "/tab/:tabname" });
+    });
+    this.route("settings", { path: "/settings" });
 });
 
 App.IndexRoute = Ember.Route.extend({

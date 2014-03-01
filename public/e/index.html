@@ -9,24 +9,31 @@
 <body>
 
   <script type="text/x-handlebars">
-  <h2>Hede: Bye-Bye iGoogle</h2>
-  <hr />
-  {{outlet}}
-  <hr />
-  <h2>Foot: Bye-Bye iGoogle</h2>
+<h2>Bye-Bye iGoogle</h2>
+<hr />
+{{outlet}}
+<br clear=all />
+<hr />
+<h2>Bye-Bye iGoogle</h2>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-
-  {{#link-to 'settings' }} settings {{/link-to}}
+    <div style="float:left; width: 200px;">
 
   <ul>
     {{#each item in model}}
     <li>{{#link-to 'tab' item.tabname}}{{item.tabname}}{{/link-to}}</li>
     {{/each}}
+    <li>-----</li>
+    <li> {{#link-to 'settings' }} Settings {{/link-to}}</li>
   </ul>
-
+    </div>
+    <div>
+        {{outlet}}
+    </div>
   </script>
+
+
 
   <script type="text/x-handlebars" data-template-name="article">
             <div class="article">
@@ -38,21 +45,21 @@
                     {{article.summary}}
                 </div> 
             </div>
-
   </script>
 
-  <script type="text/x-handlebars" data-template-name="tab">
 
+
+  <script type="text/x-handlebars" data-template-name="tab">
       {{#each item in model}}
-        This is a tab page for {{item.tab_name}},
+        The {{item.tab_name}} Page.
         {{#each tab_data in item.tab_data }}
           {{#each article in tab_data.feed_data}}
             {{partial "article"}}
           {{/each}}
         {{/each}}
       {{/each}}
-
   </script>
+
 
 
   <script type="text/x-handlebars" data-template-name="settings">
