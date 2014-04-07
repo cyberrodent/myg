@@ -82,11 +82,11 @@ module Mygoogle
             tab_key = "#{@user_key}-#{tname}"
             json_data = @tabs_parse[0].to_json
             @redis.set(tab_key, json_data)
-            "ok: #{out}"
+            "ok: #{out} #{json_data}"
         end
 
         get '/raw/:tname' do |tname|
-            @tabs_parse = parse(@tabs, tname)
+            @tabs_parse = Mg.parse(@tabs, tname.downcase)
             @tabs_parse.inspect
         end
 

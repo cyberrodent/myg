@@ -161,6 +161,7 @@ module Mg
             end
 
             f = { 
+                'id' => Digest::MD5.hexdigest(e.url),
                 'feed_title' => feed.title.strip,
                 'title' => Sanitize.clean(e.title).strip,
                 'url'   => e.url,
@@ -213,6 +214,7 @@ module Mg
                     self.set_feed_name(tab[:tab_id], position, processed_feed[0]['feed_title']) 
                 end
                 f = {
+                    'id' => Digest::MD5.hexdigest(feed_title),
                     'feed_title' => feed_title,
                     'feed_data' => processed_feed
                 }
@@ -275,6 +277,7 @@ module Mg
 
                     pfeed = processFeed(res, 10) 
                     f = { 
+                        'id' => Digest::MD5.hexdigest(feed_title),
                         'feed_title' => feed_title,
                         'feed_data'  => pfeed 
                     }
@@ -285,6 +288,7 @@ module Mg
                 } # end of each tabrss
 
                 tabs_parse << { 
+                    'id' => tname,
                     'tab_name' => tname,
                     'tab_data' => tab_temp
                 }
