@@ -16,7 +16,7 @@ module Queries
     VALUES (?, ?, ?)"
   @@sqlq['clear_user_tab'] = "DELETE FROM `user_tab` 
     WHERE user_id=?"
-  @@sqlq['get_tabs']       = "SELECT tab_name 
+  @@sqlq['get_tabs']       = "SELECT user_id, tab_id, tab_name 
     FROM user_tab 
     WHERE user_id = ? 
     ORDER BY tab_id"

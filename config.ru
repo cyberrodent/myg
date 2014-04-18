@@ -3,7 +3,7 @@ require 'log4r'
 require './lib/libraries'
 
 do_logging = true
-log_file = '/tmp/app.log'
+log_file = '/tmp/dev-mygoogle.log'
 
 if do_logging
        log = File.new(log_file, "a")
