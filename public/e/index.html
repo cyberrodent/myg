@@ -10,12 +10,12 @@
 
     <script type="text/x-handlebars">
 <header>
-    <h2>Bye-Bye iGoogle</h2>
+<h2>&nbsp;{{#link-to "index"}}FeedMe{{/link-to}}</h2>
 </header>
 {{outlet}}
 <footer>
 <br clear=all />
-    <h2>Bye-Bye iGoogle</h2>
+    <h4>FeedMe </h4>
 </footer>
   </script>
 
@@ -26,13 +26,13 @@
 
   <script type="text/x-handlebars" data-template-name="index">
       <div class="tabname-list">
-      <ul>
+
+          
         {{#each item in model}}
         <li>{{#link-to 'tab' item.tabname}}{{item.tabname}}{{/link-to}}</li>
         {{/each}}
         <li>-----</li>
         <li> {{#link-to 'settings'}} Settings {{/link-to}}</li>
-      </ul>
     </div>
         {{outlet}}
   </script>
@@ -42,19 +42,15 @@
   <script type="text/x-handlebars" data-template-name="article">
       <div>
           <h4>{{feed_title}}</h4>
-          <h3><a target='_blank' {{bindAttr href="url"}}>{{ title }}</a></h3>
+          <h3><a target='_blank' {{bind-attr href="url"}}>{{ title }}</a></h3>
           {{ summary }}
-          <br /><a target='_blank' {{bindAttr href='url'}}>Go to Article</a>
+          <br /><a target='_blank' {{bind-attr href='url'}}>Go to Article</a>
       </div>
   </script>
 
 
 
   <script type="text/x-handlebars" data-template-name="tab">
-      <div id="focused">
-      {{ outlet }} 
-      </div>
-
       <div id="tab-page">
       {{#each item in model}}
       <h2>The {{item.tab_name}} Page </h2>
@@ -72,6 +68,11 @@
         {{/each}}
         {{/each}}
     </div>
+    <div id="focused">
+      {{ outlet }} 
+    </div>
+
+
   </script>
 
 
