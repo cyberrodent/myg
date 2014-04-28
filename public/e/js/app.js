@@ -23,16 +23,26 @@ String.prototype.hashCode = function(){
  * Start the App
  */
 App = Ember.Application.create( {
-  LOG_TRANSITIONS: true,
-//  LOG_TRANSITIONS_INTERNAL: true
+//    LOG_STACKTRACE_ON_DEPRECATION : true,
+        LOG_BINDINGS                  : true,
+        LOG_TRANSITIONS               : true,
+//        LOG_TRANSITIONS_INTERNAL      : true,
+        LOG_VIEW_LOOKUPS              : true,
+//        LOG_ACTIVE_GENERATION         : true
+
 });
+
+
 App.Router.map(function() {
+
     this.resource("index", { path: "/" }, function () {
         this.resource("tab", { path: "/tab/:tabname" }, function () {
             this.resource("article", { path: "/article/:article_id" });
         } );
     } );
+
     this.route("settings", { path: "/settings" });
+
 });
 
 App.ApplicationSerializer = DS.RESTSerializer.extend({
@@ -60,7 +70,8 @@ App.Article = DS.Model.extend({
     pubdate : attr(),
     feed_title : attr(),
     title : attr(),
-    summary : attr()
+    summary : attr(),
+    url: attr()
 });
 
 
@@ -156,9 +167,12 @@ App.TabRoute = Ember.Route.extend({
                     var newarticle = self.store.push('article', article);
                 }
             }
+
+            
         });
         return back;
-    }
+    },
+//    afterModel: function() { this.transitionTo('article', this.model().id); }
 });
 
 /// ArticleController
@@ -169,19 +183,22 @@ App.ArticleController = Ember.ObjectController.extend({
 
 /// ArticleRoute
 App.ArticleRoute = Ember.Route.extend({
+   // serialize : function(model) { return { article_id: model.get('id')}; },
+
     setupController: function(controller, model) {
-        controller.set('model', model);
-    },
-    model:  function (params) { // console.log(params);
-        var ret = this.store.find('article', {id: params.article_id} );
-        if (ret) {
-            return ret;
-        } else {
-            console.log("MAYDAY");
-            return {};
-        }
-    }
-});
+         controller.set('model', model);
+         // console.log("setup article controller"); console.log(model);
+     },
+//     model:  function (params) { // console.log(params);
+//         var ret = this.store.find('article', {id: params.article_id} );
+//         if (ret) {
+//             return ret;
+//         } else {
+//             console.log("MAYDAY");
+//             return {};
+//         }
+//     }
+ });
 
 
 

@@ -8,17 +8,24 @@
 </head>
 <body>
 
-  <script type="text/x-handlebars">
-<h2>Bye-Bye iGoogle</h2>
-<hr />
+    <script type="text/x-handlebars">
+<header>
+    <h2>Bye-Bye iGoogle</h2>
+</header>
 {{outlet}}
+<footer>
 <br clear=all />
-<hr />
-<h2>Bye-Bye iGoogle</h2>
+    <h2>Bye-Bye iGoogle</h2>
+</footer>
   </script>
 
+
+
+
+
+
   <script type="text/x-handlebars" data-template-name="index">
-    <div style="float:left; width: 200px;">
+      <div class="tabname-list">
       <ul>
         {{#each item in model}}
         <li>{{#link-to 'tab' item.tabname}}{{item.tabname}}{{/link-to}}</li>
@@ -27,37 +34,44 @@
         <li> {{#link-to 'settings'}} Settings {{/link-to}}</li>
       </ul>
     </div>
-    <div>
         {{outlet}}
-    </div>
   </script>
 
 
 
   <script type="text/x-handlebars" data-template-name="article">
-      <div> this would be the article on the 
+      <div>
+          <h4>{{feed_title}}</h4>
+          <h3><a target='_blank' {{bindAttr href="url"}}>{{ title }}</a></h3>
+          {{ summary }}
+          <br /><a target='_blank' {{bindAttr href='url'}}>Go to Article</a>
       </div>
   </script>
 
 
 
   <script type="text/x-handlebars" data-template-name="tab">
+      <div id="focused">
+      {{ outlet }} 
+      </div>
+
+      <div id="tab-page">
       {{#each item in model}}
-      <h3>  The {{item.tab_name}} Page. </h3>
+      <h2>The {{item.tab_name}} Page </h2>
         {{#each tab_data in item.tab_data }}
         {{#each article in tab_data.feed_data}}
 
             <div class="article" id="{{article.id}}">
                 <span class="pubdate">{{article.pubdate}}</span>  
-                <div class="feed_title">{{article.feed_title}}</div>
-                    {{#link-to 'article' article.id }}{{article.title}}{{/link-to}}
-                <div> 
-                {{ outlet }}
-                </div> 
+                <div class="feedtitle">{{article.feed_title}}</div>
+                {{#link-to 'article' article }}{{article.title}}{{/link-to}}
+
+
             </div>
           {{/each}}
         {{/each}}
-      {{/each}}
+        {{/each}}
+    </div>
   </script>
 
 
@@ -76,7 +90,8 @@
 
   <script src="/e/js/libs/jquery-1.9.1.js"></script>
   <script src="/e/js/libs/handlebars-1.0.0.js"></script>
-  <script src="http://builds.emberjs.com/release/ember.js"></script>
+  <!-- script src="http://builds.emberjs.com/release/ember.js"></script-->
+  <script src="/e/js/libs/ember.js"></script>
   <!-- script src="/e/js/libs/ember.min.js"></script-->
   <script src="/e/js/libs/ember-data.prod.js"></script>
   <script src="/e/js/libs/json2.js"></script>
