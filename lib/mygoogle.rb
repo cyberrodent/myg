@@ -138,6 +138,7 @@ module Mg
     end
 
     def _process_mysql(f)
+        Mysqlarticle.process(f)
     end
 
     # _process

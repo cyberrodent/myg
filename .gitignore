@@ -2,6 +2,7 @@
 log/*.log
 tmp/restart.txt
 data/*
+doc*
 .DS_Store
 .rvmrc
 .powrc

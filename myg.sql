@@ -44,11 +44,17 @@ INSERT INTO users (`user_name`) VALUES ('jkolber');
 DROP TABLE IF EXISTS `article`;
 CREATE TABLE `article` (
     id                 INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    article_hash        VARCHAR(32) NOT NULL DEFAULT '',
     feed_name          VARCHAR(128) NOT NULL DEFAULT '',
     title               VARCHAR(196) NOT NULL DEFAULT 'untitled',
     summary             TEXT NOT NULL DEFAULT '',
     url                 VARCHAR(255) NOT NULL DEFAULT '',
     pubdate_timestamp   INT(11) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`pubdate_timestamp`,`url`(128)),
-    INDEX (feed_name)
+    INDEX (feed_name),
+    INDEX (article_hash)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4;
+
+
+--  alter table article add article_hash VARCHAR(32) NOT NULL DEFAULT ''
+--  after id;

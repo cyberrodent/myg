@@ -30,7 +30,7 @@ module Queries
     VALUES (?, ?, ?, ?)"
 
   # SQL QUERIES articles TABLE
-  @@sqlq['add_article'] = "INSERT INTO article (`feed_name`, `title`, `summary`, `url`, `pubdate_timestamp`) VALUES (?, ?, ?, ?, ?)"
+  @@sqlq['add_article'] = "INSERT INTO article (`feed_name`, `title`, `summary`, `url`, `pubdate_timestamp`, `article_hash`) VALUES (?, ?, ?, ?, ?, ?)"
 
   # SQL QUERIES GENERAL
   @@sqlq['feed_report'] = "SELECT a.*, b.tab_name 
