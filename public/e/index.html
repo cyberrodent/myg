@@ -53,11 +53,12 @@
   <script type="text/x-handlebars" data-template-name="flistview">
       <div class="feedlist">
           From: {{ controller.tab_name }}
-            <ol>
+          <dl>
           {{#each f in controllers.feedlist}}
-          <li>                {{ f.feed_title }}  </li>
+          <dt>{{ f.feed_title}}</dt>
+          <dd> </dd>
           {{/each}}
-      </ol>
+      </dl>
       </div>
   </script>
 

@@ -47,7 +47,9 @@ var attr = DS.attr;
 /// Feed Model
 App.Feed = DS.Model.extend({
     feed_title: attr(),
-    feed_data: attr()
+    feed_data: attr(),
+    feed_len: attr(),
+    tab: attr()
 });
 
 
@@ -98,7 +100,7 @@ App.FeedlistController = Ember.ArrayController.extend({
 
 App.TabController = Ember.ObjectController.extend({
     needs: "feedlist",
-    tab_name : "x",
+    tab_name : "",
     feedlistController: Ember.computed.alias("controllers.feedlist"),
 });
 
@@ -106,9 +108,16 @@ App.TabController = Ember.ObjectController.extend({
 App.TabRoute = Ember.Route.extend({
     tab_name : '',
     setupController: function (controller, model) {
+        self = this;
         controller.set('model', model);
         controller.set('tab_name', this.tab_name);
-        this.controllerFor('feedlist').set('model', this.store.all('feed'));
+        this.controllerFor('feedlist').set('model', 
+            this.store.filter('feed', function (e) { 
+                if (self.tab_name == e.get('tab')) {
+                    return e;
+                }
+            } )
+        )
     },
     model: function (params) {
         var tabs_url = "/tabdata/"+ params.tabname.toLowerCase();
@@ -116,7 +125,7 @@ App.TabRoute = Ember.Route.extend({
 
         var back = Ember.$.getJSON(tabs_url, function (indata) {
 
-            self.store.unloadAll('feed');
+//            self.store.unloadAll('feed');
             var i = 0,
               ii = 0,
               data = indata[0],
@@ -125,12 +134,22 @@ App.TabRoute = Ember.Route.extend({
             for (i=0; i<j; i++) {
                 var feed = data.tab_data[i];
                 var feed_len = feed.feed_data.length;
-
+                feed.feed_len = feed_len;
+                feed.tab = data.tab_name;
                 self.store.push('feed', feed);
                 for (ii = 0; ii < feed_len; ii++) {
                     self.store.push('article', feed.feed_data[ii]);
                 }
             }
+            var f  = self.store.all('article');
+            console.log(f);
+            return f; 
+        });
+        back.then(function (d) {
+            console.log('BACK');
+            console.log(d);
+
+       
         });
         return back;
     },
@@ -178,3 +197,9 @@ App.ArticleRoute = Ember.Route.extend({
 //     application.register('feedme:main', App.FeedlistController);
 //   }
 // });
+
+Ember.Handlebars.helper('firstarticle', function (value) {
+    var e = value[0];
+    out = e.title;
+    return out;
+});
