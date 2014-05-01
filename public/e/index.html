@@ -27,7 +27,7 @@
   <script type="text/x-handlebars" data-template-name="index">
       <div class="tabname-list">
 
-          
+
         {{#each item in model}}
         <li>{{#link-to 'tab' item.tabname}}{{item.tabname}}{{/link-to}}</li>
         {{/each}}
@@ -36,6 +36,22 @@
     </div>
         {{outlet}}
   </script>
+
+
+<script type="text/x-handlebars" data-template-name="components/feed-list">
+
+<div class="feedlist">
+THE FEED LIST
+{{#each thing in list}}
+<li>{{ thing }}</li>
+{{/each}}
+
+{{#each f in feed_array}}
+ -- {{ f }}
+{{/each}}
+</div>
+</script>
+
 
 
 
@@ -50,16 +66,31 @@
 
 
 
+  <script type="text/x-handlebars" data-template-name="flistview">
+      <div class="feedlist">
+          THE VIEW
+          {{#each f in feed_array }}
+          <div>                {{ f }}  </div>
+          {{/each}}
+      </div>
+  </script>
+
+
+
   <script type="text/x-handlebars" data-template-name="tab">
       <div id="tab-page">
+          {{feed-list }}
+          {{view App.FeedslistView}}
       {{#each item in model}}
       <h2>The {{item.tab_name}} Page </h2>
         {{#each tab_data in item.tab_data }}
         {{#each article in tab_data.feed_data}}
 
             <div class="article" id="{{article.id}}">
-                <span class="pubdate">{{article.pubdate}}</span>  
-                <div class="feedtitle">{{article.feed_title}}</div>
+                <span class="pubdate">{{article.pubdate}}</span>
+                <div class="feedtitle">
+                {{#link-to 'feed' article.feed_title}}{{article.feed_title}}{{/link-to}}
+                </div>
                 {{#link-to 'article' article }}{{article.title}}{{/link-to}}
 
 
@@ -69,7 +100,7 @@
         {{/each}}
     </div>
     <div id="focused">
-      {{ outlet }} 
+      {{ outlet }}
     </div>
 
 

@@ -22,7 +22,7 @@ footer {
     background-color: #336699;
     color: white;
 }
-.active { 
+.active {
     background-color: #fff;
     color: #000;
     text-decoration: none;
@@ -132,4 +132,10 @@ p.article a {
 #focused h3 {
     text-transform: capitalize;
 }
+
+.feedlist {
+    float: right;
+    display: block;
+    padding: 20px;
+    background-color: yellow;
 }
