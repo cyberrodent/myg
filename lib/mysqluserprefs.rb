@@ -24,7 +24,7 @@ class Mysqluserprefs < Mysqlcore
 
 
   def Mysqluserprefs.get_user_tab(user_id, tab_id)
-    begin 
+    begin
       res = []
       db = self.dbconn(Mg.mysql_opts)
 
@@ -40,7 +40,7 @@ class Mysqluserprefs < Mysqlcore
   end
 
   def Mysqluserprefs.get_prefs(user_id = 1)
-    begin 
+    begin
       res = []
       db = self.dbconn(Mg.mysql_opts)
       get_user = db.prepare(Queries.getq('get_user'))
@@ -53,7 +53,7 @@ class Mysqluserprefs < Mysqlcore
           obj = {
             :tabname => row[0],
             :tab_id => row[3],
-            :tabrss => [] 
+            :tabrss => []
           }
           res << obj
         end
@@ -62,7 +62,7 @@ class Mysqluserprefs < Mysqlcore
         last_tab = row[0]
       end
     end
-        res 
+        res
 
 
   end
@@ -76,7 +76,7 @@ class Mysqluserprefs < Mysqlcore
       puts(feed_name, user_id, tab_id, position)
     end
 
-  end 
+  end
 
   # given the right input
   # store the user's preferences into the mysql backend
@@ -97,14 +97,14 @@ class Mysqluserprefs < Mysqlcore
 
       tab_num = 0
       opts.each { |tab|
-        tab_num += 1 
-        add_tab.execute user_id, tab_num, tab[:tabname] 
+        tab_num += 1
+        add_tab.execute user_id, tab_num, tab[:tabname]
         p tab[:tabname]
         position = 1
         clear_feed.execute user_id, tab_num
         p tab[:tabrss].each{|url|
           add_feed.execute user_id, tab_num, position, url
-          position = position + 1 
+          position = position + 1
         }
       }
     ensure
@@ -112,6 +112,15 @@ class Mysqluserprefs < Mysqlcore
     end
   end
 
-
+  def Mysqluserprefs.add_feed(user_id, tab_num, position, url)
+    begin
+      db = self.dbconn(Mg.mysql_opts)
+      user_id = user_id || 100
+      add_feed   = db.prepare(Queries.getq('add_feed'))
+      add_feed.execute user_id, tab_num, position, url
+    ensure
+      db.close
+    end
+  end
 
 end

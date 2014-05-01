@@ -23,7 +23,7 @@ module Mygoogle
         end
 
         get '/' do
-            mustache :home  
+            mustache :home
         end
 
         get '/tabs/list' do
@@ -46,6 +46,23 @@ module Mygoogle
             res
         end
 
+      get '/tabdata/all' do
+          aggres = []
+          @tabs.each{|tab|
+            tname = tab[:tabname].downcase
+            tab_key = "#{@user_key}-#{tname}"
+            res = @redis.get(tab_key)
+            if res.nil?
+                @tabs_parse = parse(@tabs, tname)
+                res = @tabs_parse.to_json
+                @redis.set(tab_key, res)
+            end
+            aggres << res
+        }
+        headers "Access-Control-Allow-Origin" => "*"
+        headers "Content-Type" => "application/json; charset=utf8"
+        aggres.to_json
+      end
 
         get '/tabdata/:tname' do |tname|
             tab_key = "#{@user_key}-#{tname}"
@@ -89,7 +106,7 @@ module Mygoogle
                 @redis.set(tab_key, json_data)
                 out += "<hr />"
             }
-            out 
+            out
         end
 
         get '/fetch/:tname' do |tname|
@@ -110,7 +127,7 @@ module Mygoogle
         get '/parse' do
             @tabs_parse = Mg.parse @tabs
             @redis.set(@user_key, @tabs_parse)
-            mustache :parse 
+            mustache :parse
         end
 
         get '/googlenews' do
@@ -128,7 +145,7 @@ module Mygoogle
             data = Mg.get_user_tab(tab_id)
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
-            return data.to_json 
+            return data.to_json
         end
 
 
@@ -137,7 +154,7 @@ module Mygoogle
             return "CATCH ALL"
         end
 
-        error do 
+        error do
             return "ERR"
         end
 
