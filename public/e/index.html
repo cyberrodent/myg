@@ -38,22 +38,6 @@
   </script>
 
 
-<script type="text/x-handlebars" data-template-name="components/feed-list">
-
-<div class="feedlist">
-THE FEED LIST
-{{#each thing in list}}
-<li>{{ thing }}</li>
-{{/each}}
-
-{{#each f in feed_array}}
- -- {{ f }}
-{{/each}}
-</div>
-</script>
-
-
-
 
   <script type="text/x-handlebars" data-template-name="article">
       <div>
@@ -68,10 +52,12 @@ THE FEED LIST
 
   <script type="text/x-handlebars" data-template-name="flistview">
       <div class="feedlist">
-          THE VIEW
-          {{#each f in feed_array }}
-          <div>                {{ f }}  </div>
+          From: {{ controller.tab_name }}
+            <ol>
+          {{#each f in controllers.feedlist}}
+          <li>                {{ f.feed_title }}  </li>
           {{/each}}
+      </ol>
       </div>
   </script>
 
@@ -79,7 +65,7 @@ THE FEED LIST
 
   <script type="text/x-handlebars" data-template-name="tab">
       <div id="tab-page">
-          {{feed-list }}
+
           {{view App.FeedslistView}}
       {{#each item in model}}
       <h2>The {{item.tab_name}} Page </h2>

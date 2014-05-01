@@ -134,8 +134,11 @@ p.article a {
 }
 
 .feedlist {
+    font-size:0.8em;
     float: right;
     display: block;
-    padding: 20px;
-    background-color: yellow;
+    padding: 10px;
+    background-color: gray;
+    width:200px;
+    overflow: hidden;
 }

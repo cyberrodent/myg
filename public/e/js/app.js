@@ -88,37 +88,40 @@ App.SettingsRoute = Ember.Route.extend({
 
 App.FeedslistView = Ember.View.extend({
     templateName: 'flistview',
-    flist: []
 });
 
-/// TabController
+App.FeedlistController = Ember.ArrayController.extend({
+  
+ 
+
+});
+
 App.TabController = Ember.ObjectController.extend({
     needs: "feedlist",
-    feeds : function () {
-        return App.Feed.find();
-    }
+    tab_name : "x",
+    feedlistController: Ember.computed.alias("controllers.feedlist"),
 });
 
-/// TabRoute
+
 App.TabRoute = Ember.Route.extend({
+    tab_name : '',
     setupController: function (controller, model) {
         controller.set('model', model);
-    },
-    afterModel: function (mm, tt) {
-      console.log(mm);
+        controller.set('tab_name', this.tab_name);
+        this.controllerFor('feedlist').set('model', this.store.all('feed'));
     },
     model: function (params) {
-        // App.TabRouteBuilder(params);
         var tabs_url = "/tabdata/"+ params.tabname.toLowerCase();
         var self = this;
 
         var back = Ember.$.getJSON(tabs_url, function (indata) {
+
             self.store.unloadAll('feed');
             var i = 0,
               ii = 0,
               data = indata[0],
               j = data.tab_data.length;
-
+            self.tab_name = data.tab_name;
             for (i=0; i<j; i++) {
                 var feed = data.tab_data[i];
                 var feed_len = feed.feed_data.length;
@@ -129,16 +132,8 @@ App.TabRoute = Ember.Route.extend({
                 }
             }
         });
-        back.then( function (e) {
-            // console.log(e[0]);
-            var a = self.store.all('feed');
-            var feed_array = a.content.map(function(e) { return e.get('feed_title'); });
-            console.log(feed_array);
-            self.feed_array = feed_array;
-        } );
         return back;
     },
-//    afterModel: function() { this.transitionTo('article', this.model().id); }
 });
 
 
@@ -157,10 +152,7 @@ App.FeedController = Ember.ObjectController.extend({
   needs: "tab"
 });
 
-App.FeedlistController = Ember.ObjectController.extend({
-  needs: "tab",
-  feedlist: ['qweqweqwe','asdfasdfa','xzxcvzxcv']
-});
+
 
 /// ArticleController
 App.ArticleController = Ember.ObjectController.extend({
