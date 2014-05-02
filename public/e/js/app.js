@@ -44,7 +44,13 @@ App.store = DS.Store.extend({
 });
 
 var attr = DS.attr;
-/// Feed Model
+
+
+App.Tab = DS.Model.extend({
+    tab_name : attr(),
+    tab_data : attr()
+});
+
 App.Feed = DS.Model.extend({
     feed_title: attr(),
     feed_data: attr(),
@@ -53,7 +59,7 @@ App.Feed = DS.Model.extend({
 });
 
 
-/// Article Model
+
 App.Article = DS.Model.extend({
     pubdate : attr(),
     feed_title : attr(),
@@ -66,8 +72,52 @@ App.Article = DS.Model.extend({
 
 
 
+App.ApplicationRoute = Ember.Route.extend({
+  model : function (params) {
+    var tabs_url = "/tabdata/all";
+    var self = this;
+    var back = Ember.$.getJSON(tabs_url, function (indata) {
+      self.store.unloadAll('feed');
+      var i = 0, j = 10, ii = 0;
+      var tab_count = indata.length;
+      console.log('reading '  + tab_count + " tabs" );
 
-/// IndexRoute
+      for (a = 0; a < tab_count; a++) {
+        // var data = $.parseJSON(indata[a]);
+        var data = indata[a];
+        console.log('data is ');
+        console.log(data['tab_name']);
+        self.store.push('tab', data);
+        j = data.tab_data.length;
+        for (i = 0; i < j; i++) {
+          var feed = data.tab_data[i];
+          var feed_len = feed.feed_data.length;
+          feed.feed_len = feed_len;
+          feed.tab = data.tab_name;
+          console.log('the feed');
+          console.log(feed);
+          self.store.push('feed', feed);
+          for (ii = 0; ii < feed_len; ii++) {
+              console.log('storing ' + feed.feed_data[ii].title);
+            self.store.push('article', feed.feed_data[ii]);
+          }
+        }
+        var f  = self.store.all('article');
+      };
+      return back;
+    });
+
+  },
+  setupController : function (controller, model) {
+    console.log("Running application route");
+    console.log(this.store.filter('feed').map(function(e){ return e.get('feed_title') })
+  );
+  //  this.controllerFor('tab').set('model', this.model);
+
+
+}
+});
+
 App.IndexRoute = Ember.Route.extend({
     model: function () {
         var tabs_url = "/tabs/list";
@@ -93,8 +143,8 @@ App.FeedslistView = Ember.View.extend({
 });
 
 App.FeedlistController = Ember.ArrayController.extend({
-  
- 
+
+
 
 });
 
@@ -111,47 +161,21 @@ App.TabRoute = Ember.Route.extend({
         self = this;
         controller.set('model', model);
         controller.set('tab_name', this.tab_name);
-        this.controllerFor('feedlist').set('model', 
-            this.store.filter('feed', function (e) { 
+        this.controllerFor('feedlist').set('model',
+            this.store.filter('feed', function (e) {
                 if (self.tab_name == e.get('tab')) {
                     return e;
                 }
             } )
-        )
+         );
     },
     model: function (params) {
-        var tabs_url = "/tabdata/"+ params.tabname.toLowerCase();
-        var self = this;
-
-        var back = Ember.$.getJSON(tabs_url, function (indata) {
-
-//            self.store.unloadAll('feed');
-            var i = 0,
-              ii = 0,
-              data = indata[0],
-              j = data.tab_data.length;
-            self.tab_name = data.tab_name;
-            for (i=0; i<j; i++) {
-                var feed = data.tab_data[i];
-                var feed_len = feed.feed_data.length;
-                feed.feed_len = feed_len;
-                feed.tab = data.tab_name;
-                self.store.push('feed', feed);
-                for (ii = 0; ii < feed_len; ii++) {
-                    self.store.push('article', feed.feed_data[ii]);
-                }
-            }
-            var f  = self.store.all('article');
-            console.log(f);
-            return f; 
-        });
-        back.then(function (d) {
-            console.log('BACK');
-            console.log(d);
-
-       
-        });
-        return back;
+        this.tab_name = params.tabname;
+      return this.store.filter('tab', function (e) { 
+          if (e.get('tab_name') === params.tabname) {
+              return e;
+          }
+      });
     },
 });
 

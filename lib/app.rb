@@ -57,7 +57,7 @@ module Mygoogle
                 res = @tabs_parse.to_json
                 @redis.set(tab_key, res)
             end
-            aggres << res
+            aggres << JSON.parse(res)
         }
         headers "Access-Control-Allow-Origin" => "*"
         headers "Content-Type" => "application/json; charset=utf8"
