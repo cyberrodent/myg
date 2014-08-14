@@ -154,7 +154,41 @@ module Mg
         how_many = how_many - 1
         feed.entries[0 .. how_many ].each {|e|
 
-            summary = processed_feed.count < show_this_many_summaries ? (e.summary.nil? ? "" : e.summary)  : ""
+            e_sum = e.summary
+            unless e_sum.nil?
+                es_len = e.summary.length
+            else
+                es_len = 0
+            end
+
+            e_con = e.content
+            unless e_con.nil?
+                ec_len = e.content.length
+            else
+                ec_len = 0
+            end
+
+            if (ec_len == 0) and (es_len == 0)
+                e_summary = 'nils'
+            else
+
+                    if ec_len >= es_len
+                        e_summary = e_con
+                    else
+                        e_summary = e_sum
+                    end
+            end
+
+            ## if feed.title == "Vox -  All"
+            ##     puts "SUMMARY DEBUG START"
+            ##     puts feed.title
+            ##     puts "CONTENT:"
+            ##     puts Sanitize.clean(e_summary)
+            ##     puts "SUMMARY DEBUG DONE"
+            ##     # puts e.inspect
+            ## end
+            
+            summary = processed_feed.count < show_this_many_summaries ? (e_summary.nil? ? "" : e_summary)  : ""
             summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }}).strip
 
             if e.title.nil?
