@@ -169,7 +169,7 @@ module Mg
             end
 
             if (ec_len == 0) and (es_len == 0)
-                e_summary = 'nils'
+                e_summary = ''
             else
 
                     if ec_len >= es_len
