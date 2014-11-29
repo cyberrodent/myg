@@ -2,7 +2,7 @@ require 'log4r'
 # include Log4r
 require './lib/libraries'
 
-do_logging = true
+do_logging = false
 log_file = '/tmp/dev-mygoogle.log'
 
 if do_logging
