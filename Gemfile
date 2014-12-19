@@ -17,6 +17,5 @@ gem "sanitize"
 gem "nokogiri", '~> 1.4.7' 
 
 group :test do
-    gem "nokogiri", '~> 1.4.7' # for ruby 1.8.6
     gem "capybara"
 end
