@@ -2,6 +2,8 @@ require 'sinatra/base'
 require 'mustache/sinatra'
 require 'json'
 
+Encoding.default_external = "utf-8"
+
 module Mygoogle
     class App < Sinatra::Base
         register Mustache::Sinatra
@@ -72,7 +74,7 @@ module Mygoogle
                 res = @tabs_parse.to_json
                 @redis.set(tab_key, res)
             else
-                @tabs_parse = JSON.parse(res)
+                @tabs_parse = JSON.parse(res, :external_encoding => 'iso-8859-1')
             end
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
