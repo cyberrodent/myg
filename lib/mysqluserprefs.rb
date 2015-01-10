@@ -62,9 +62,8 @@ class Mysqluserprefs < Mysqlcore
         last_tab = row[0]
       end
     end
-        res
 
-
+    res
   end
 
   def Mysqluserprefs.set_feed_name(user_id, tab_id, position, feed_name)
@@ -73,7 +72,7 @@ class Mysqluserprefs < Mysqlcore
       db = self.dbconn(Mg.mysql_opts)
       sth = db.prepare(Queries.getq('set_feed_title_on_feed'))
       sth.execute feed_name, user_id, tab_id, position
-      puts(feed_name, user_id, tab_id, position)
+      # puts(feed_name, user_id, tab_id, position)
     end
 
   end

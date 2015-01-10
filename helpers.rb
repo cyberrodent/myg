@@ -72,7 +72,6 @@ module Mygoogle
             $g.report('myg.fetch', 1)
             $statsd.increment('fetch', 1)
 
-
             feed = nil
             fetch_options = {
                 :timeout => 10
@@ -80,7 +79,7 @@ module Mygoogle
 
             begin 
                 start_time = Time.now
-                feed = Feedzirra::Feed.fetch_and_parse(feed_url, fetch_options)
+                feed = Feedjira::Feed.fetch_and_parse(feed_url, fetch_options)
                 duration = Time.now - start_time
                 duration_ms = duration * 1000
                 $logger.info("\tFetch took #{duration}") 

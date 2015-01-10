@@ -5,7 +5,7 @@
 # ----------------------------------------------------
 require 'nokogiri'
 require 'json'
-require 'feedzirra'
+require 'feedjira'
 require 'sanitize'
 require './lib/mysql'
 require './lib/mysqluserprefs'
@@ -118,19 +118,19 @@ module Mg
             :timeout => 10
         }
         begin
-            puts "fetching Feed #{url}"
-            feed = Feedzirra::Feed.fetch_and_parse(url, options)
+            $logger.info("Fetching Feed #{url}")
+            feed = Feedjira::Feed.fetch_and_parse(url, options)
         rescue
             # error with Feedzirra Feed
-            puts "fetch failure"
+            $logger.error "Fetch failure"
             return nil
         end
 
         begin
-            puts "sanitizing"
+            $logger.info "Sanitizing"
             feed.sanitize_entries!
         rescue
-            puts "problem sanitizing feed. proceeding" 
+            $logger.error "Problem sanitizing feed from #{url}. proceeding with nil." 
             return nil
         end
 
@@ -147,6 +147,7 @@ module Mg
     # - kicks off save each article to mysql archive
     def _process(tab_id, feed, how_many)
         show_this_many_summaries = how_many # show a summary for every article
+
         processed_feed = []
         if feed.nil?
             return processed_feed 
@@ -171,12 +172,11 @@ module Mg
             if (ec_len == 0) and (es_len == 0)
                 e_summary = ''
             else
-
-                    if ec_len >= es_len
-                        e_summary = e_con
-                    else
-                        e_summary = e_sum
-                    end
+               if ec_len >= es_len
+                   e_summary = e_con
+               else
+                   e_summary = e_sum
+               end
             end
 
             ## if feed.title == "Vox -  All"
@@ -191,7 +191,7 @@ module Mg
             summary = processed_feed.count < show_this_many_summaries ? (e_summary.nil? ? "" : e_summary)  : ""
             summary = Sanitize.clean(summary, { :attributes => { 'a' => ['href'] }}).strip
 
-            if e.title.nil?
+            if e.title.empty?
                 e.title = "untitled"
             end
 
@@ -240,7 +240,7 @@ module Mg
                 if res.nil?
                     next
                 end
-                feed_title = res.nil? ? "untitled" : res.title
+                feed_title = res.nil? ? "Untitled" : res.title
                 processed_feed = _process(tab[:tab_id], res, process_limit)
 
                 if processed_feed.nil?
@@ -308,7 +308,7 @@ module Mg
                     tab_feeds = tab_feeds + 1
                     num_feeds = num_feeds + 1
 
-                    feed_title = res.nil? ? "untitled" : res.title
+                    feed_title = res.empty? ? "Untitled Feed" : res.title
 
                     pfeed = processFeed(res, 10) 
                     f = { 
@@ -334,7 +334,7 @@ module Mg
             $g.report("myg.parsetime", duration)
 
             return tabs_parse
-        end
+    end
 
 
 
@@ -343,9 +343,9 @@ module Mg
 
 
     def test
-      fake_user_id = 1
-      ups = "tsk tsk lazy"
-      p ups.inspect
+            fake_user_id = 1
+            ups = "tsk tsk lazy"
+            p ups.inspect
     end
     
   end # end self class

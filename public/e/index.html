@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Bye bye iGoogle</title>
+<title>FeedMe</title>
   <link rel="stylesheet" href="/e/css/normalize.css">
   <link rel="stylesheet" href="/e/css/style.css">
 </head>
@@ -42,7 +42,7 @@
   <script type="text/x-handlebars" data-template-name="article">
       <div>
           <h4>{{feed_title}}</h4>
-          <h3><a target='_blank' {{bind-attr href="url"}}>{{ title }}</a></h3>
+          <h3><a target='_blank' {{bind-attr href="url"}}>[{{ title }}]</a></h3>
           {{ summary }}
           <br /><a target='_blank' {{bind-attr href='url'}}>Go to Article</a>
       </div>
@@ -78,7 +78,7 @@
                 <div class="feedtitle">
                 {{#link-to 'feed' article.feed_title}}{{article.feed_title}}{{/link-to}}
                 </div>
-                {{#link-to 'article' article }}{{article.title}}{{/link-to}}
+                {{#link-to 'article' article }}[{{article.title}}]{{/link-to}}
 
 
             </div>

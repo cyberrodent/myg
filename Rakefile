@@ -2,6 +2,9 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+
 require 'rake/testtask'
 
 task :default => :test
@@ -16,11 +19,12 @@ end
 
 namespace :myg do
 
+  require './lib/libraries'
   require './lib/mygoogle'
 
   desc "Prints the name of each tab and a list of the feed urls"  
   task :feedlist do
-    tabs = Mg.mysql_get_prefs
+    tabs = Mg.get_prefs
     tabs.each {|tab|
         puts tab[:tabname]
         puts "\t"  + tab[:tabrss].join("\n\t")
@@ -29,7 +33,8 @@ namespace :myg do
 
   desc "fetches a tab or all tabs"
   task :fetch do
-      tabs = Mg.mysql_get_prefs
+      fake_user_id = 1
+      tabs = Mg.get_prefs fake_user_id
       parsed = Mg.process(tabs, "tech")
       parsed.each{ |d|
         name = d[:tab_name]
@@ -55,7 +60,7 @@ namespace :myg do
     end
 
     task :smoke_get_prefs do
-      p Mg.mysql_get_prefs(1)
+      p Mg.get_prefs(1)
     end
 
     task :smoke_set_feed_name do

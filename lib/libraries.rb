@@ -6,7 +6,7 @@ require 'benchmark'
 
 # Pick a Feed handling library
 # require 'feed_tools'
-require 'feedzirra'
+require 'feedjira'
 require 'redis'
 
 # Pick a logging library

@@ -2,7 +2,8 @@ require 'sinatra/base'
 require 'mustache/sinatra'
 require 'json'
 
-Encoding.default_external = "utf-8"
+Encoding.default_internal = Encoding::UTF_8
+Encoding.default_external = Encoding::UTF_8
 
 module Mygoogle
     class App < Sinatra::Base
@@ -98,7 +99,6 @@ module Mygoogle
 
        get '/fetch/all' do
             out = ""
-            # @tabs_parse = parse(@tabs)
             @tabs_parse = Mg.process(@tabs)
             @tabs_parse.each{|tab|
                 out += tab[:tab_name]
