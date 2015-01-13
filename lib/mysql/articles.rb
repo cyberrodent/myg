@@ -1,6 +1,6 @@
 require "mysql"
 require "./lib/mysql"
-require './lib/queries'
+require './lib/mysql/queries'
 
 class Mysqlarticle < Mysqlcore
   def Mysqlarticle.process(f)

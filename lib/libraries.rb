@@ -1,44 +1,49 @@
+## Sets up global-ish things
+# sets up logging
+# graphite and statsd too
 require 'rubygems'
 require 'bundler'
 Bundler.setup
+
+base_dir = File.dirname(File.dirname(__FILE__))
+$LOAD_PATH.unshift base_dir unless $LOAD_PATH.include? base_dir
 
 require 'benchmark'
 
 # Pick a Feed handling library
 # require 'feed_tools'
 require 'feedjira'
+
+# pick an in-memory cache
 require 'redis'
 
 # Pick a logging library
 require 'log4r'
 include Log4r
 
-require "statsd"
+
 
 require 'sinatra/base'
 require 'mustache/sinatra'
 
-base_dir = File.dirname(File.dirname(__FILE__))
-$LOAD_PATH.unshift base_dir unless $LOAD_PATH.include? base_dir
-
 require './helpers'
 require './lib/app'
 require './lib/mygoogle'
-require "./lib/graphite"
 require "./views/layout"
 
-#
-# I am new/bad at Ruby - these should not be globals if we can help it
-#
 
+# These should not be globals if we can help it
 # Setup a global logger
 $logger = Log4r::Logger.new('APPLOG')
 $logger.outputters << Log4r::FileOutputter.new('applog', :filename =>  '/tmp/app.log')
 $logger.outputters << Log4r::Outputter.stdout
 
 # setup a global statsd
+require "statsd"
 $statsd = Statsd.new('machsheva.home', 8125)
 $statsd.namespace = 'myp'
 $statsd.count('init', 1)
 
+# setup a global graphite
+require "./lib/graphite"
 $g = Graphite.new('machsheva.home')

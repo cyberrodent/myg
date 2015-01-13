@@ -1,14 +1,14 @@
 
 
-require './lib/mysql'
 require './lib/userprefs'
-require './lib/queries'
+require './lib/mysql'
+require './lib/mysql/queries'
 
-class Mysqluserprefs < Mysqlcore
+class Mysql_userprefs < Mysqlcore
 
   include Userprefs
 
-  def Mysqluserprefs.get_user_tabs(user_id)
+  def Mysql_userprefs.get_user_tabs(user_id)
         begin
             res = []
             db = self.dbconn(Mg.mysql_opts)
@@ -23,7 +23,7 @@ class Mysqluserprefs < Mysqlcore
   end
 
 
-  def Mysqluserprefs.get_user_tab(user_id, tab_id)
+  def Mysql_userprefs.get_user_tab(user_id, tab_id)
     begin
       res = []
       db = self.dbconn(Mg.mysql_opts)
@@ -39,7 +39,7 @@ class Mysqluserprefs < Mysqlcore
 
   end
 
-  def Mysqluserprefs.get_prefs(user_id = 1)
+  def Mysql_userprefs.get_prefs(user_id = 1)
     begin
       res = []
       db = self.dbconn(Mg.mysql_opts)
@@ -66,7 +66,7 @@ class Mysqluserprefs < Mysqlcore
     res
   end
 
-  def Mysqluserprefs.set_feed_name(user_id, tab_id, position, feed_name)
+  def Mysql_userprefs.set_feed_name(user_id, tab_id, position, feed_name)
     begin
       user_id = user_id || 1
       db = self.dbconn(Mg.mysql_opts)
@@ -80,7 +80,7 @@ class Mysqluserprefs < Mysqlcore
   # given the right input
   # store the user's preferences into the mysql backend
   # returns indicator of success tbd
-  def Mysqluserprefs.store_user_prefs(user_id, opts)
+  def Mysql_userprefs.store_user_prefs(user_id, opts)
 
     begin
       db = self.dbconn(Mg.mysql_opts)
@@ -111,7 +111,7 @@ class Mysqluserprefs < Mysqlcore
     end
   end
 
-  def Mysqluserprefs.add_feed(user_id, tab_num, position, url)
+  def Mysql_userprefs.add_feed(user_id, tab_num, position, url)
     begin
       db = self.dbconn(Mg.mysql_opts)
       user_id = user_id || 100

@@ -1,25 +1,6 @@
-module AbstractInterface
-
-  class InterfaceNotImplementedError < NoMethodError
-  end
-
-  def self.included(klass)
-    klass.send(:include, AbstractInterface::Methods)
-    klass.send(:extend, AbstractInterface::Methods)
-  end
-
-  module Methods
-
-    def api_not_implemented(klass)
-      caller.first.match(/in \`(.+)\'/)
-      method_name = $1
-      raise AbstractInterface::InterfaceNotImplementedError.new("#{klass.class.name} needs to implement '#{method_name}' for interface #{self.name}!")
-    end
-
-  end
-
-end
-
+# This is the userprefs interface code.
+# If you want to do things with User preferences.
+# You must create a class that satisfies this interface
 
 module Userprefs
   include AbstractInterface
