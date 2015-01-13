@@ -7,6 +7,7 @@ Encoding.default_external = Encoding::UTF_8
 
 module Mygoogle
     class App < Sinatra::Base
+
         register Mustache::Sinatra
         helpers Mygoogle::Helpers
 
@@ -15,7 +16,9 @@ module Mygoogle
             :templates => 'templates/',
             :namespace => Mygoogle
         }
+
         set :public_folder, "public/"
+
         set :static, true
 
         before do
@@ -25,14 +28,34 @@ module Mygoogle
             @redis = Redis.new
         end
 
+
+
+
+
+
         get '/' do
             mustache :home
         end
+
 
         get '/tabs/list' do
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
             @tabs.to_json
+        end
+
+
+        get '/tabs/:tname' do |tname|
+            tab_key = "#{@user_key}-#{tname}"
+            res = @redis.get(tab_key)
+            if res.nil?
+                @tabs_parse = parse(@tabs, tname)
+                json_data = @tabs_parse.to_json
+                @redis.set(tab_key, json_data)
+            else
+                @tabs_parse = JSON.parse(res)
+            end
+            mustache :singletab
         end
 
 
@@ -49,23 +72,32 @@ module Mygoogle
             res
         end
 
-      get '/tabdata/all' do
-          aggres = []
-          @tabs.each{|tab|
-            tname = tab[:tabname].downcase
-            tab_key = "#{@user_key}-#{tname}"
-            res = @redis.get(tab_key)
-            if res.nil?
-                @tabs_parse = parse(@tabs, tname)
-                res = @tabs_parse.to_json
-                @redis.set(tab_key, res)
-            end
-            aggres << JSON.parse(res)
-        }
-        headers "Access-Control-Allow-Origin" => "*"
-        headers "Content-Type" => "application/json; charset=utf8"
-        aggres.to_json
-      end
+
+        get '/json/tab/:tab_id' do |tab_id|
+            data = Mg.get_user_tab(tab_id)
+            headers "Access-Control-Allow-Origin" => "*"
+            headers "Content-Type" => "application/json; charset=utf8"
+            return data.to_json
+        end
+
+
+        get '/tabdata/all' do
+            aggres = []
+            @tabs.each{|tab|
+                tname = tab[:tabname].downcase
+                tab_key = "#{@user_key}-#{tname}"
+                res = @redis.get(tab_key)
+                if res.nil?
+                    @tabs_parse = parse(@tabs, tname)
+                    res = @tabs_parse.to_json
+                    @redis.set(tab_key, res)
+                end
+                aggres << JSON.parse(res)
+            }
+            headers "Access-Control-Allow-Origin" => "*"
+            headers "Content-Type" => "application/json; charset=utf8"
+            aggres.to_json
+        end
 
         get '/tabdata/:tname' do |tname|
             tab_key = "#{@user_key}-#{tname}"
@@ -80,20 +112,6 @@ module Mygoogle
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
             [@tabs_parse].to_json
-        end
-
-        get '/tabs/:tname' do |tname|
-
-            tab_key = "#{@user_key}-#{tname}"
-            res = @redis.get(tab_key)
-            if res.nil?
-                @tabs_parse = parse(@tabs, tname)
-                json_data = @tabs_parse.to_json
-                @redis.set(tab_key, json_data)
-            else
-                @tabs_parse = JSON.parse(res)
-            end
-            mustache :singletab
         end
 
 
@@ -143,25 +161,18 @@ module Mygoogle
 
 
 
-        get '/json/tab/:tab_id' do |tab_id|
-            data = Mg.get_user_tab(tab_id)
-            headers "Access-Control-Allow-Origin" => "*"
-            headers "Content-Type" => "application/json; charset=utf8"
-            return data.to_json
-        end
-
-
         # ---- catch all, errors and after ---- #
+
         get '/*' do
             return "CATCH ALL"
         end
 
         error do
-            return "ERR"
+            return "Some sort of error occurred."
         end
 
         after do
-            # puts "after"
+            # is there anything to do after?
             pass
         end
 
