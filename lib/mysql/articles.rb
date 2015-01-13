@@ -18,9 +18,9 @@ class Mysqlarticle < Mysqlcore
       $logger.info "Article added:#{f['id']} #{f['title']}  "
     rescue Mysql::Error => e
       if e.errno == 1062
-        $logger.error "Article already in db:#{f['id']} #{f['title']}"
+        $logger.warn "Article already in db. NOT RE-INSERTING: #{f['id']} #{f['title']}"
       else
-        $logger.error(e.message)
+        $logger.warn(e.message)
         # raise e
       end
     end

@@ -17,9 +17,6 @@ require 'feedjira'
 # pick an in-memory cache
 require 'redis'
 
-# Pick a logging library
-require 'log4r'
-include Log4r
 
 
 
@@ -31,19 +28,34 @@ require './lib/app'
 require './lib/mygoogle'
 require "./views/layout"
 
+#
+# These should not be global nor hard coded, and yet...
+#
 
-# These should not be globals if we can help it
-# Setup a global logger
-$logger = Log4r::Logger.new('APPLOG')
+# Global logger
+
+require 'log4r'
+include Log4r
+$logger = Log4r::Logger.new('myg')
 $logger.outputters << Log4r::FileOutputter.new('applog', :filename =>  '/tmp/app.log')
 $logger.outputters << Log4r::Outputter.stdout
 
-# setup a global statsd
+# Only show errors or worse (this ignores lots of warnngs and info)
+$logger.level = Log4r::ERROR
+
+
+
+
+# Global statsd
 require "statsd"
 $statsd = Statsd.new('machsheva.home', 8125)
 $statsd.namespace = 'myp'
 $statsd.count('init', 1)
 
-# setup a global graphite
+
+# Global graphite
 require "./lib/graphite"
 $g = Graphite.new('machsheva.home')
+
+
+
