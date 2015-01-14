@@ -270,8 +270,14 @@ module Mg
 
 
 
-
+        # Older method - no longer needed
+        # some endpoints will still call this
+        #
         def parse(tabs, gettab = nil)
+
+
+            raise "Don't be using this method anymore"
+
             start_time = Time.now
 
             num_feeds = 0 

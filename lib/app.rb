@@ -21,16 +21,19 @@ module Mygoogle
 
         set :static, true
 
+        set :show_exceptions, true
+
         before do
             @user_key = "kolber01" # TODO: get this from somewhere
-            @tabs = Mg.get_prefs(1)
-            @tabs_data = Mg.get_user_tabs(1)
+            fake_user_id = 1
+
+            # the list of tabs for the given user id
+            @tabs = Mg.get_prefs fake_user_id
+            @tabs_data = Mg.get_user_tabs fake_user_id
+
+            # set up our cache
             @redis = Redis.new
         end
-
-
-
-
 
 
         get '/' do
@@ -39,6 +42,7 @@ module Mygoogle
 
 
         get '/tabs/list' do
+            # returns [ {"tabname":"Home","tab_id":1,"tabrss": [..] } .. ]  for each of this user's tabs.
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
             @tabs.to_json
@@ -46,10 +50,11 @@ module Mygoogle
 
 
         get '/tabs/:tname' do |tname|
-            tab_key = "#{@user_key}-#{tname}"
+            # Check the cache first
+            tab_key = "#{@user_key}-#{tname.downcase}"
             res = @redis.get(tab_key)
             if res.nil?
-                @tabs_parse = parse(@tabs, tname)
+                @tabs_parse = Mg.process(@tabs, tname.downcase)
                 json_data = @tabs_parse.to_json
                 @redis.set(tab_key, json_data)
             else
@@ -60,12 +65,12 @@ module Mygoogle
 
 
         get '/json/:tname' do |tname|
-            tab_key = "#{@user_key}-#{tname}"
+            tab_key = "#{@user_key}-#{tname.downcase}"
             res = @redis.get(tab_key)
             if res.nil?
-                @tabs_parse = parse(@tabs, tname)
-                res = @tabs_parse.to_json
-                @redis.set(tab_key, res)
+                @tabs_parse = Mg.process(@tabs, tname.downcase)
+                json_data = @tabs_parse.to_json
+                @redis.set(tab_key, json_data)
             end
             headers "Access-Control-Allow-Origin" => "*"
             headers "Content-Type" => "application/json; charset=utf8"
@@ -132,7 +137,7 @@ module Mygoogle
         get '/fetch/:tname' do |tname|
             @tabs_parse = Mg.process(@tabs, tname.downcase)
             out = @tabs_parse[0][:tab_name]
-            tab_key = "#{@user_key}-#{tname}"
+            tab_key = "#{@user_key}-#{tname.downcase}"
             json_data = @tabs_parse[0].to_json
             @redis.set(tab_key, json_data)
             "ok: #{out} #{json_data}"
@@ -167,9 +172,9 @@ module Mygoogle
             return "CATCH ALL"
         end
 
-        error do
-            return "Some sort of error occurred."
-        end
+#        error do
+#            return "Some sort of error occurred."
+#        end
 
         after do
             # is there anything to do after?
