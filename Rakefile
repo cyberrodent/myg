@@ -24,7 +24,7 @@ namespace :myg do
 
   desc "Prints the name of each tab and a list of the feed urls"  
   task :feedlist do
-    tabs = Mg.get_prefs
+    tabs = Mg.get_prefs 1
     tabs.each {|tab|
         puts tab[:tabname]
         puts "\t"  + tab[:tabrss].join("\n\t")
@@ -56,7 +56,7 @@ namespace :myg do
           :tabrss => [ "url3", "url4" ]
         }
       ]
-      p Mg.mysql_store_user_prefs(7, opts)
+      p Mg.store_user_prefs(7, opts)
     end
 
     task :smoke_get_prefs do
@@ -64,13 +64,14 @@ namespace :myg do
     end
 
     task :smoke_set_feed_name do
-      Mg.mysql_set_feed_name(2,2,"Philosophy Forums")
+      puts Mg.set_feed_name(2,2,"Philosophy Forums")
     end
 
     task :smoke_get_user_tab do
-      Mg.mysql_get_user_tab(1)
+      puts Mg.get_user_tab(1)
+
     end
     task :smoke_get_user_tabs do
-        Mg.mysql_get_user_tabs
+        puts Mg.get_user_tabs 1
     end
 end # end of namespace :myg
