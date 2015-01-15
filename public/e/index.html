@@ -9,24 +9,20 @@
 <body>
 
     <script type="text/x-handlebars">
-<header>
-<h2>&nbsp;{{#link-to "index"}}FeedMe{{/link-to}}</h2>
-</header>
-{{outlet}}
-<footer>
-<br clear=all />
-    <h4>FeedMe </h4>
-</footer>
+        <header>
+        <h2>&nbsp;{{#link-to "index"}}FeedMe{{/link-to}}</h2>
+        </header>
+        {{outlet}}
+        <footer>
+        <br clear=all />
+            <h4>FeedMe </h4>
+        </footer>
   </script>
-
-
-
 
 
 
   <script type="text/x-handlebars" data-template-name="index">
       <div class="tabname-list">
-
 
         {{#each item in model}}
         <li>{{#link-to 'tab' item.tabname}}{{item.tabname}}{{/link-to}}</li>
