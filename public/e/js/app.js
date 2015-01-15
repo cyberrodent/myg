@@ -4,12 +4,12 @@
 
 /* Start the App */
 App = Ember.Application.create( {
-        // LOG_STACKTRACE_ON_DEPRECATION : true,
-        LOG_BINDINGS                  : true,
-        LOG_TRANSITIONS               : true,
-        // LOG_TRANSITIONS_INTERNAL      : true,
-        LOG_VIEW_LOOKUPS              : true,
-        // LOG_ACTIVE_GENERATION         : true
+    // LOG_STACKTRACE_ON_DEPRECATION : true,
+    LOG_BINDINGS                  : true,
+    LOG_TRANSITIONS               : true,
+    // LOG_TRANSITIONS_INTERNAL      : true,
+    LOG_VIEW_LOOKUPS              : true,
+    // LOG_ACTIVE_GENERATION         : true
 
 });
 
@@ -27,16 +27,26 @@ App.Router.map(function() {
     this.route("settings", { path: "/settings" });
 });
 
-App.ApplicationSerializer = DS.RESTSerializer.extend({
-    normalizePayload: function (type, payload) {
-        console.log("this is the payload");
-        this._super(type, payload);
-    }
-});
+// //////////////////////////////////////////////////////////////////
+//
+//      At some point i tried to get a serializer to do this
+//
+      App.ApplicationSerializer = DS.RESTSerializer.extend({
+          normalizePayload: function (type, payload) {
+              console.log("this is the payload");
+              this._super(type, payload);
+          },
+           extractArray: function(store, type, payload) {
+                console.log("HOLY MOLY! CALLED EXTRACTARRAY");
+                return this._super(store, type, payload);
+           }
+      });
 
-App.adapter = DS.Adapter.extend({
-    serializer: App.ApplicationSerializer
-});
+//      App.adapter = DS.Adapter.extend({
+//          serializer: App.ApplicationSerializer
+//      });
+//
+// //////////////////////////////////////////////////////////////////
 
 App.store = DS.Store.extend({
 
@@ -57,8 +67,6 @@ App.Feed = DS.Model.extend({
     tab: attr()
 });
 
-
-
 App.Article = DS.Model.extend({
     pubdate : attr(),
     feed_title : attr(),
@@ -67,53 +75,53 @@ App.Article = DS.Model.extend({
     url: attr()
 });
 
-
-
-
-
 App.ApplicationRoute = Ember.Route.extend({
-  model : function (params) {
+
+    model : function (params) {
+
+    /*
+     * This is probably wrong in some way which is why its so nasty
+     * we make one request for all the data and put the data into
+     * the store. This *is* what the serializer ought to do i think?
+     */
     var tabs_url = "/tabdata/all";
     var self = this;
     var back = Ember.$.getJSON(tabs_url, function (indata) {
-      self.store.unloadAll('feed');
-      var i = 0, j = 10, ii = 0;
-      var tab_count = indata.length;
-      console.log('reading '  + tab_count + " tabs" );
+        self.store.unloadAll('feed');
+        var a, i = 0, j = 10, ii = 0;
+        var tab_count = indata.length;
+        // console.log('reading '  + tab_count + " tabs" );
 
-      for (a = 0; a < tab_count; a++) {
-        // var data = $.parseJSON(indata[a]);
-        var data = indata[a];
-        console.log('data is ');
-        console.log(data['tab_name']);
-        self.store.push('tab', data);
-        j = data.tab_data.length;
-        for (i = 0; i < j; i++) {
-          var feed = data.tab_data[i];
-          var feed_len = feed.feed_data.length;
-          feed.feed_len = feed_len;
-          feed.tab = data.tab_name;
-          console.log('the feed');
-          console.log(feed);
-          self.store.push('feed', feed);
-          for (ii = 0; ii < feed_len; ii++) {
-              console.log('storing ' + feed.feed_data[ii].title);
-            self.store.push('article', feed.feed_data[ii]);
-          }
-        }
-        var f  = self.store.all('article');
-      };
-      return back;
+        for (a = 0; a < tab_count; a++) {
+            // var data = $.parseJSON(indata[a]);
+            var data = indata[a];
+            // console.log('data is ');
+            // console.log(data['tab_name']);
+            self.store.push('tab', data);
+            j = data.tab_data.length;
+            for (i = 0; i < j; i++) {
+                var feed = data.tab_data[i];
+                var feed_len = feed.feed_data.length;
+                feed.feed_len = feed_len;
+                feed.tab = data.tab_name;
+                // console.log('the feed');
+                // console.log(feed);
+                self.store.push('feed', feed);
+                for (ii = 0; ii < feed_len; ii++) {
+                    // console.log('storing ' + feed.feed_data[ii].title);
+                    self.store.push('article', feed.feed_data[ii]);
+                }
+            }
+            var f  = self.store.all('article');
+        };
+        return back;
     });
 
-  },
-  setupController : function (controller, model) {
-    console.log("Running application route");
-    console.log(this.store.filter('feed').map(function(e){ return e.get('feed_title') })
-  );
-  //  this.controllerFor('tab').set('model', this.model);
-
-
+},
+setupController : function (controller, model) {
+    // console.log("Running application route");
+    // console.log(this.store.filter('feed').map(function(e){ return e.get('feed_title') }) );
+    //  this.controllerFor('tab').set('model', this.model);
 }
 });
 
@@ -142,9 +150,6 @@ App.FeedslistView = Ember.View.extend({
 });
 
 App.FeedlistController = Ember.ArrayController.extend({
-
-
-
 });
 
 App.TabController = Ember.ObjectController.extend({
@@ -161,20 +166,20 @@ App.TabRoute = Ember.Route.extend({
         controller.set('model', model);
         controller.set('tab_name', this.tab_name);
         this.controllerFor('feedlist').set('model',
-            this.store.filter('feed', function (e) {
-                if (self.tab_name == e.get('tab')) {
-                    return e;
-                }
-            } )
-         );
+                                           this.store.filter('feed', function (e) {
+                                               if (self.tab_name == e.get('tab')) {
+                                                   return e;
+                                               }
+                                           } )
+                                          );
     },
     model: function (params) {
         this.tab_name = params.tabname;
-      return this.store.filter('tab', function (e) { 
-          if (e.get('tab_name') === params.tabname) {
-              return e;
-          }
-      });
+        return this.store.filter('tab', function (e) { 
+            if (e.get('tab_name') === params.tabname) {
+                return e;
+            }
+        });
     },
 });
 
@@ -182,14 +187,13 @@ App.TabRoute = Ember.Route.extend({
 App.FeedRoute = Ember.Route.extend({
     tab: Ember.computed.alias("controllers.tab"),
     model: function (params) {
-      console.log("feed route");
-      var r = this.store.all('feed');
-      console.log(r);
-      return r;
-
+        console.log("feed route");
+        var r = this.store.all('feed');
+        console.log(r);
+        return r;
     }
-
 });
+
 App.FeedController = Ember.ObjectController.extend({
   needs: "tab"
 });

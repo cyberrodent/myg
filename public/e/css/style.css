@@ -37,9 +37,9 @@ header .active {
     position: fixed;
     width: 10%;
     top:72px;
-    left:0%;
-    float:left;
-    padding: 0px;
+    left:0;
+    float: left;
+    overflow: hidden;
 }
 
 .tabname-list li {
@@ -51,15 +51,15 @@ header .active {
 }
 .tabname-list li a {
     display: block;
-    color: #333;
+    color: #cfc;
     text-decoration:none;
     padding:8px 0;
 }
 
 .tabname-list li:hover {
     text-decoration: underline;
-    background-color: #ddd;
-    color: #333;
+    background-color: #036;
+    color: #cc3;
 }
 .tabname-list li> a.active {
     background-color: white;
@@ -82,7 +82,7 @@ div.article {
     width:33%;
     background-color: #eee;
     padding: 5px 10px 20px 10px;
-    margin-left: 10%;
+    margin-left: 26%;
 }
 div.article a {
 
@@ -92,12 +92,27 @@ p.article a {
     font-weight: bold;
 }
 
-.feedtitle {
-    font-size:0.8em;
-    font-weight: bold;
+div.article .feedtitle {
+    font-size:0.6em;
+    font-weight: normal;
     color: #333;
     text-transform: capitalize;
 }
+.articletitle a {
+    color: black;
+}
+
+.articletitle a,
+.feedtitle a {
+    text-decoration: none;
+}
+
+.articletitle a:hover {
+    color: #900;
+    text-decoration: underline;
+}
+
+
 .pubdate {
     float: right;
     font-size: 0.6em;
@@ -117,8 +132,8 @@ p.article a {
     position: fixed;
     float: right;
     top:72px;
-    left: 48%;
-    width:345px;
+    left: 63%;
+    width: 35%;
     padding:0;
     margin:0 0 72px 0;
     color:black;
@@ -135,10 +150,17 @@ p.article a {
 
 .feedlist {
     font-size:0.8em;
-    float: right;
     display: block;
-    padding: 10px;
-    background-color: gray;
-    width:200px;
+    float: left;
+     
+    margin-left:11%;
+    background-color: #d0d0ee;
+    width:14%;
     overflow: hidden;
+}
+.feedlist dl {
+    padding: 4px;
+}
+.feedlist dl dt {
+    padding: 7px 0;
 }

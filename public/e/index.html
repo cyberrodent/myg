@@ -38,7 +38,7 @@
   <script type="text/x-handlebars" data-template-name="article">
       <div>
           <h4>{{feed_title}}</h4>
-          <h3><a target='_blank' {{bind-attr href="url"}}>[{{ title }}]</a></h3>
+          <h3><a target='_blank' {{bind-attr href="url"}}>{{ title }}</a></h3>
           {{ summary }}
           <br /><a target='_blank' {{bind-attr href='url'}}>Go to Article</a>
       </div>
@@ -48,11 +48,13 @@
 
   <script type="text/x-handlebars" data-template-name="flistview">
       <div class="feedlist">
-          From: {{ controller.tab_name }}
+          {{ controller.tab_name }}
           <dl>
           {{#each f in controllers.feedlist}}
-          <dt>{{ f.feed_title}}</dt>
-          <dd> </dd>
+          <dt>{{#link-to 'feed' f.feed_title}}{{ f.feed_title}}{{/link-to}}</dt>
+          <dd>
+            
+          </dd>
           {{/each}}
       </dl>
       </div>
@@ -63,7 +65,8 @@
   <script type="text/x-handlebars" data-template-name="tab">
       <div id="tab-page">
 
-      {{view App.FeedslistView}}
+          {{view App.FeedslistView}}
+
       {{#each item in model}}
       <h2>The {{item.tab_name}} Page </h2>
         {{#each tab_data in item.tab_data }}
@@ -74,8 +77,10 @@
                 <div class="feedtitle">
                 {{#link-to 'feed' article.feed_title}}{{article.feed_title}}{{/link-to}}
                 </div>
-                {{#link-to 'article' article }}[{{article.title}}]{{/link-to}}
+                <div class="articletitle">
+                {{#link-to 'article' article }}{{article.title}}{{/link-to}}
 
+                </div>
 
             </div>
           {{/each}}
