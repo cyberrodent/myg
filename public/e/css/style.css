@@ -62,10 +62,13 @@ header .active {
     color: #cc3;
 }
 .tabname-list li> a.active {
-    background-color: white;
+    background-color: #ff0;
     color: black;
 }
-
+#tab-page {
+        margin-bottom: 36px;
+        height: 100%;
+}
 #tab-page h2 {
     position: fixed;
     line-height:64px;
@@ -78,14 +81,13 @@ header .active {
     z-index:1;
 }
 div.article {
-    max-width: 500px;
-    width:33%;
+    width:40%;
     background-color: #eee;
     padding: 5px 10px 20px 10px;
-    margin-left: 26%;
+    margin-left: 11%;
+
 }
 div.article a {
-
     text-transform: capitalize;
 }
 p.article a {
@@ -93,13 +95,15 @@ p.article a {
 }
 
 div.article .feedtitle {
-    font-size:0.6em;
+    font-size:0.7em;
+    line-height: 1.6em;
     font-weight: normal;
     color: #333;
     text-transform: capitalize;
 }
 .articletitle a {
     color: black;
+    font-size:1.0em;
 }
 
 .articletitle a,
@@ -132,16 +136,21 @@ div.article .feedtitle {
     position: fixed;
     float: right;
     top:72px;
-    left: 63%;
-    width: 35%;
-    padding:0;
-    margin:0 0 72px 0;
+    left: 55%;
+    width: 39%;
+    /* padding-left:7px;
+    padding-right:7px; */
+    padding-bottom:5px;
+    margin-top: 0;
+    margin-bottom:36px;
+    margin-right:1%;
     color:black;
     background-color:white;
     max-height: 560px;
     overflow: scroll;
     line-height:1.5em;
     font-size: 1.0em;
+    max-height: 78%;
 }
 
 #focused h3 {
@@ -152,15 +161,46 @@ div.article .feedtitle {
     font-size:0.8em;
     display: block;
     float: left;
-     
     margin-left:11%;
-    background-color: #d0d0ee;
+    margin-right: 1%;
+    margin-bottom: 1%;
+    padding-left:6px;
+
+    background-color: #d0e0ee;
     width:14%;
     overflow: hidden;
 }
+
+.feedlist.mini {
+    text-transform: uppercase;
+    position: fixed;
+    left: 17%;
+    top:2%;
+    padding:1px;
+    margin:0;
+    color: #000;
+    font-weight: normal;
+    z-index:1;
+    height: 3%;
+}
+.feedlist.mini h4 {
+    margin:0;
+    padding:0;
+    color: #000;
+    font-size: 0.8em;
+}
+
+
+
+
 .feedlist dl {
     padding: 4px;
 }
 .feedlist dl dt {
     padding: 7px 0;
+}
+
+.feedlist a {
+        color: #006;
+        text-decoration: none;
 }

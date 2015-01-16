@@ -48,7 +48,7 @@
 
   <script type="text/x-handlebars" data-template-name="flistview">
       <div class="feedlist">
-          {{ controller.tab_name }}
+              <h4>{{ controller.tab_name }} Feeds</h4>
           <dl>
           {{#each f in controllers.feedlist}}
           <dt>{{#link-to 'feed' f.feed_title}}{{ f.feed_title}}{{/link-to}}</dt>
